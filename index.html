@@ -79,7 +79,16 @@ p{margin:0;line-height:1.45;font-size:16px}
 .world{border:2.5px solid var(--ink);border-radius:16px;padding:10px;text-align:left;display:flex;flex-direction:column;gap:8px}
 .world.land{background:linear-gradient(135deg,#e8f6dd,#f6fbf1)}
 .world.sea{background:linear-gradient(135deg,#d7f0fb,#eef9fd)}
+.world.stone{background:linear-gradient(135deg,#f3eadb,#fbf7f0)}
 .world.sky{background:linear-gradient(135deg,#e7f1ff,#fbfdff)}
+.tl{display:flex;flex-direction:column;gap:6px;text-align:left}
+.tlbar{display:grid;grid-template-columns:repeat(4,1fr);border:2.5px solid var(--ink);border-radius:12px;overflow:hidden}
+.tlbar span{padding:6px 4px;font-weight:800;font-size:12px;line-height:1.2;text-align:center;background:#f3eadb;position:relative}
+.tlbar span + span{border-left:2px solid var(--ink)}
+.tlbar span:nth-child(4){background:#e8d9b8}
+.tlbar small{display:block;font-weight:600;font-size:10.5px;color:var(--muted)}
+.tlbar span.here{background:var(--sun)}
+.tlbar span.here::after{content:"You are here";display:block;font-size:10.5px;color:var(--red)}
 .world.locked{background:#efeef2;color:var(--muted)}
 .whead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .whead b{font-family:var(--display);font-size:26px;line-height:1}
@@ -178,7 +187,7 @@ p{margin:0;line-height:1.45;font-size:16px}
     <button class="chip icon" id="pauseBtn" aria-label="Pause">II</button>
     <div class="chip" id="powChip" title="Power"><span id="powIco" aria-hidden="true">⚡</span><span class="bat" id="bat"></span></div>
     <div class="chip" title="Medicine kits"><span class="kit" aria-hidden="true"></span><b id="medN">0</b></div>
-    <div class="chip" title="Litter picked up"><span aria-hidden="true">♻️</span><b id="litN">0</b></div>
+    <div class="chip" id="litChip" title="Litter picked up"><span aria-hidden="true" id="litIco">♻️</span><b id="litN">0</b></div>
     <div class="chip" title="Animals helped"><span aria-hidden="true">🐾</span><b id="aniN">0/3</b></div>
     <div class="chip" id="distChip" title="Flight distance" hidden><b id="distN">0 m</b><span class="muted" id="bestN"></span></div>
   </div>
@@ -243,10 +252,20 @@ p{margin:0;line-height:1.45;font-size:16px}
       <div class="stars" id="dStars"></div>
       <div class="stats">
         <div><b id="dAni">0</b>animals helped</div>
-        <div><b id="dLit">0</b>litter picked up</div>
+        <div><b id="dLit">0</b><span id="dLitLbl">litter picked up</span></div>
         <div><b id="dHeli">0</b>times help came</div>
       </div>
       <p id="dMsg"></p>
+      <div class="tl" id="dTL" hidden>
+        <div class="label">Stone Age timeline in Britain</div>
+        <div class="tlbar">
+          <span data-era="old">Old Stone Age<small>until about 10,000 BC</small></span>
+          <span data-era="mid">Middle Stone Age<small>10,000 to 4000 BC</small></span>
+          <span data-era="new">New Stone Age<small>4000 to 2500 BC</small></span>
+          <span data-era="bronze">Bronze Age<small>from 2500 BC</small></span>
+        </div>
+        <p class="muted" id="dTLtxt"></p>
+      </div>
       <div class="unlock" id="dUnlock" hidden></div>
       <div class="row">
         <button class="btn alt" id="dMenu">Menu</button>
@@ -334,6 +353,9 @@ const WORLDS = {
   sea:  {title:'Under the Sea', subject:'Spelling', icon:'🌊', powIco:'🫧', pow:'air',
     friend:'Diver Kai swam over with a medicine kit. Teamwork!', call:'Call Diver Kai for help',
     helpCall:'Out of air! Calling the rescue boat...', helpDone:'The rescue boat dropped a fresh air tank!'},
+  stone:{title:'Stone Age', subject:'History', icon:'🪨', powIco:'⚡', pow:'power',
+    friend:'Ranger Sam came back through time with a medicine kit. Teamwork!', call:'Call Ranger Sam for help',
+    helpCall:'Out of power! Calling the rescue helicopter...', helpDone:'The rescue helicopter dropped a new solar battery!'},
   sky:  {title:'Sky Rescue', subject:'Science', icon:'☁️', powIco:'⚡', pow:'power',
     friend:'The medical blimp floated over with a medicine kit. Teamwork!', call:'Call the medical blimp'},
 };
@@ -356,6 +378,13 @@ const ANIMALS = {
   seal:    {w:'sea', e:'🦭', n:'Seal', hurt:'is caught in a fishing line.', thanks:'Arf arf! Thank you! I can swim free again!', fact:'Some seals can hold their breath underwater for more than an hour.'},
   dolphin: {w:'sea', e:'🐬', n:'Dolphin', hurt:'bumped into an old barrel.', thanks:'Click click! Thank you, crew! You\'re amazing!', fact:'Dolphins sleep with half of their brain awake, so they remember to breathe.'},
   turtle:  {w:'sea', e:'🐢', n:'Sea turtle', boss:true, hurt:'is tangled in a giant ghost net. This turtle is hurt the most!', thanks:'Thank you, crew! You saved me! Now I can swim home to Hawaii!', fact:'In Hawaii, the green sea turtle is called honu. Sea turtles can live for more than 50 years.'},
+  // stone age
+  reindeer:{w:'stone', e:'🦌', n:'Reindeer', hurt:'has a sore hoof from the icy ground.', thanks:'Thank you! Now I can keep up with my herd!', fact:'Ice Age hunters followed herds of reindeer. They used the meat for food, the skins for clothes and tents, and the antlers for tools.'},
+  wildhorse:{w:'stone', e:'🐎', n:'Wild horse', hurt:'has cut its leg on sharp rocks.', thanks:'Neigh! Thank you! I can gallop again!', fact:'Stone Age artists painted wild horses on cave walls. Some of these paintings are more than 30,000 years old!'},
+  mammoth: {w:'stone', e:'🦣', n:'Woolly mammoth', boss:true, hurt:'is stuck in a frozen bog. This mammoth is hurt the most!', thanks:'Thank you, Doctor! Now I can stomp off to find my herd!', fact:'Woolly mammoths had thick fur and small ears to keep warm. Stone Age people even built huts from mammoth bones and tusks!'},
+  beaver:  {w:'stone', e:'🦫', n:'Beaver', hurt:'has a splinter in its paw from building a dam.', thanks:'Thank you! Back to building my dam!', fact:'Beavers lived all over Stone Age Britain. Their dams made ponds full of fish and birds for people to catch.'},
+  aurochs: {w:'stone', e:'🐂', n:'Aurochs', hurt:'has a cracked horn.', thanks:'Mooo! Thank you, kind vet!', fact:'Aurochs were huge wild cattle, as tall as a grown-up at the shoulder. New Stone Age farmers tamed cattle for milk, meat and leather.'},
+  wolf:    {w:'stone', e:'🐺', n:'Grey wolf', hurt:'has a thorn stuck in its paw.', thanks:'Aroooo! Thank you for helping me!', fact:'Dogs were the very first animals that people tamed. They came from wolves, more than 15,000 years ago.'},
   // sky
   bluetit: {w:'sky', e:'🐦', n:'Blue tit', hurt:'flew into a window and feels dizzy.', thanks:'Tweet tweet! Thank you! I feel much better!', fact:'Long ago, blue tits learned to peck open the foil tops on milk bottles to drink the cream!'},
   sparrow: {w:'sky', e:'🐦', f:BROWN_BIRD, n:'Sparrow', hurt:'has a balloon string tangled round its foot.', thanks:'Cheep cheep! Thank you for untangling me!', fact:'Sparrows love taking dust baths to keep their feathers clean.'},
@@ -378,6 +407,29 @@ const LEVELS = [
    water:['#43bad9','#0c5c84'], sand:'#e2cc98', animals:['crab','reeffish','octopus'], end:'🐚'},
   {world:'sea', name:'Voyage to Hawaii', len:8500, speed:1.1, mix:{barrel:3,jelly:4,net:3,litter:5,med:2,air:2},
    water:['#2a93c4','#06304f'], sand:'#cdb27c', animals:['seal','dolphin','turtle'], end:'Hawaii'},
+  {world:'stone', name:'Ice Age Tundra', era:'old', len:7200, speed:1.04, mix:{rock:4,mud:2,litter:5,med:2,sun:1}, snow:true, snowcaps:true, trees:'pine', sparse:true,
+   sky:['#86a9c8','#e4edf3'], far:'#b4c4d4', hill:['#8f9c8a','#6f7c6a'], grass:'#9a9f74', trail:'#8a7a66',
+   pine:['#2c4a3a','#56765d'], leaf:['#3d5a3a','#7a9466'], animals:['reindeer','wildhorse','mammoth'], end:'Painted Cave', landmark:'cave',
+   finds:[
+     {name:'flint hand axe', fact:'Hand axes were chipped from flint into a sharp teardrop shape. People used them to cut meat, wood and animal skins.'},
+     {name:'bone needle', fact:'Stone Age people sewed animal skins and furs into warm clothes, using needles made of bone and thread made from animal sinew.'},
+     {name:'spear point', fact:'Hunters tied sharp flint points onto wooden spears to hunt reindeer, horses and even mammoths.'},
+     {name:'shell necklace', fact:'Even in the Stone Age people loved jewellery! They made necklaces from shells, animal teeth and beads.'}],
+   timeline:[[.12, 'More than 2 million years ago, early humans in Africa made the very first stone tools.'],
+     [.42, 'About 300,000 years ago, people just like us, called Homo sapiens, first lived in Africa.'],
+     [.72, 'Over 40,000 years ago, people began painting animals on cave walls, using coloured earth and charcoal.']]},
+  {world:'stone', name:'Stone Age Farm', era:'new', len:8000, speed:1.1, mix:{rock:3,mud:3,litter:5,med:2,sun:1}, trees:'leaf',
+   sky:['#5aa7de','#d6ecf8'], far:'#93aec4', hill:['#7aa35e','#58833f'], grass:'#6a9a45', trail:'#a0805a',
+   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], animals:['beaver','aurochs','wolf'], end:'Stonehenge', landmark:'stonehenge',
+   finds:[
+     {name:'polished stone axe', fact:'New Stone Age farmers used polished stone axes to chop down trees and clear the land for fields.'},
+     {name:'clay pot', fact:'Farmers made pots from clay to store and cook food. Some were decorated with patterns pressed in with cord.'},
+     {name:'flint arrowhead', fact:'Flint arrowheads were fixed to arrows and shot from a bow to hunt deer and birds.'},
+     {name:'quern stone', fact:'A quern was a pair of stones used to grind wheat into flour for bread.'}],
+   timeline:[[.12, 'About 12,000 years ago the Ice Age ended. The ice melted and forests grew across Britain.'],
+     [.42, 'About 6,000 years ago, in 4000 BC, farming reached Britain. People grew wheat and kept sheep, cows and pigs.'],
+     [.72, 'Stonehenge was built in stages, starting about 5,000 years ago, around 3000 BC.']],
+   outro:'About 2500 BC, people in Britain learned to make bronze from copper and tin, and the Stone Age came to an end.'},
   {world:'sky', name:'Sky Rescue', endless:true, speed:.95, mix:{litter:5,med:2,sun:2,blimp:1},
    sky:['#4fa3e0','#dceffc'], far:'#9fb9d3', animals:['bluetit','sparrow','magpie','eagle']},
 ];
@@ -412,6 +464,76 @@ const SPELL_HARD = [['ocean','🌊',['oshun','ocian']],['turtle','🐢',['turtel
   ['kangaroo','🦘',['kangeroo','kangaru']],['monkey','🐒',['munkey','monky']],['rabbit','🐇',['rabit','rabbet']],
   ['squirrel','🐿️',['squirel','skwirrel']],['spider','🕷️',['spyder','spidor']],['caterpillar','🐛',['catterpillar','caterpiller']],
   ['journey','🧭',['jurney','journy']]];
+
+// History (stone age) — ages 6–7
+const HIST_EASY = [
+  ['What did Stone Age people use to make sharp tools?', 'Flint stone', ['Plastic','Metal']],
+  ['What did Stone Age people wear to keep warm?', 'Animal skins and furs', ['Jumpers from a shop','Raincoats']],
+  ['Which big hairy animal lived in Ice Age Britain?', 'A woolly mammoth', ['A giraffe','A kangaroo']],
+  ['What did Stone Age people paint on cave walls?', 'Animals', ['Cars','Castles']],
+  ['How did Stone Age people make fire?', 'Striking stones or rubbing sticks', ['Using matches','Using a lighter']],
+  ['What did Stone Age hunters use to catch animals?', 'Spears', ['Fishing rods with reels','Cars']],
+  ['Where did some Stone Age people shelter?', 'In caves', ['In flats','In hotels']],
+  ['What was a Stone Age sewing needle made from?', 'Bone', ['Steel','Plastic']],
+  ['What did Stone Age people eat?', 'Meat, fish, nuts and berries', ['Pizza and chips','Sweets']],
+  ['What did New Stone Age farmers grow?', 'Wheat', ['Bananas','Chocolate']],
+  ['Which animal did people tame first?', 'The dog', ['The cat','The goldfish']],
+  ['What is the famous Stone Age stone circle in England?', 'Stonehenge', ['Big Ben','The Tower of London']],
+  ['What came after the Stone Age?', 'The Bronze Age', ['The Space Age','The Dinosaur Age']],
+  ['Did Stone Age people live at the same time as dinosaurs?', 'No, dinosaurs died out long before', ['Yes, they rode them','Yes, they kept them as pets']],
+  ['What did New Stone Age people make pots from?', 'Clay', ['Glass','Plastic']],
+  ['What did Stone Age people use to make paint?', 'Coloured earth and charcoal', ['Paint from a tin','Felt-tip pens']],
+  ['What was the weather like in the Ice Age?', 'Very cold', ['Very hot','Warm and sunny']],
+  ['What is a woolly mammoth?', 'A hairy relative of the elephant', ['A huge bird','A big fish']],
+  ['What were Stone Age farm houses made of?', 'Wood, mud and straw', ['Bricks and glass','Metal']],
+  ['What did people use to grind wheat into flour?', 'A quern stone', ['A food blender','A toaster']],
+  ['What gave Stone Age people light at night?', 'Fire', ['Torches with batteries','Light bulbs']],
+  ['How do we know about the Stone Age?', 'From things people left behind', ['From old videos','From photos']],
+  ['What do we call someone who digs up things from long ago?', 'An archaeologist', ['A dentist','A pilot']],
+  ['Which Ice Age animal has big antlers?', 'A reindeer', ['A rabbit','A penguin']],
+  ['What did hunters do with animal skins?', 'Made clothes and tents', ['Threw them away','Made paper']],
+  ['What animals did New Stone Age farmers keep?', 'Sheep, cows and pigs', ['Lions and tigers','Parrots']],
+  ['How long did the Stone Age last?', 'A very, very long time', ['One week','About a year']],
+  ['What did Stone Age people make jewellery from?', 'Shells, teeth and beads', ['Gold coins','Plastic']],
+  ['What did Stone Age people use to carry and store food?', 'Baskets, skins and clay pots', ['Plastic bags','Tin cans']],
+  ['Why did Stone Age people move around a lot?', 'To follow the animals they hunted', ['To go on holiday','To visit the shops']],
+];
+
+// History (stone age) — ages 8–10
+const HIST_HARD = [
+  ['What are the three parts of the Stone Age called?', 'Palaeolithic, Mesolithic and Neolithic', ['Jurassic, Triassic and Cretaceous','Bronze, Iron and Gold']],
+  ['What does "Neolithic" mean?', 'New Stone Age', ['Old Stone Age','Middle Stone Age']],
+  ['What does "Palaeolithic" mean?', 'Old Stone Age', ['New Stone Age','Iron Age']],
+  ['In which period did people in Britain start farming?', 'The Neolithic', ['The Palaeolithic','The Iron Age']],
+  ['Roughly when did farming reach Britain?', 'About 4000 BC', ['About AD 1066','About 100,000 BC']],
+  ['Roughly when was work on Stonehenge first started?', 'About 3000 BC', ['About AD 1500','About 50,000 BC']],
+  ['Where were the oldest stone tools found?', 'Africa', ['Australia','Antarctica']],
+  ['Which stone was best for making sharp tools?', 'Flint', ['Chalk','Sandstone']],
+  ['What is Skara Brae?', 'A Stone Age village in Orkney, Scotland', ['A castle','A Roman fort']],
+  ['Why did people start living in villages?', 'They began farming and stayed in one place', ['They got tired of walking','Cars were invented']],
+  ['What happened when the last Ice Age ended?', 'It got warmer and forests grew', ['It got even colder','The sea froze for ever']],
+  ['Roughly when did the last Ice Age end?', 'About 12,000 years ago', ['About 100 years ago','About 1 million years ago']],
+  ['Britain became an island when…', 'melting ice made the sea rise', ['a volcano erupted','people dug a channel']],
+  ['What was Doggerland?', 'Land that once joined Britain to Europe', ['A Stone Age theme park','A town for dogs']],
+  ['How did Mesolithic people mostly get their food?', 'Hunting, fishing and gathering', ['Farming','Buying it']],
+  ['What did Neolithic people use to make cloth?', 'Wool and plant fibres like flax', ['Nylon','Polyester']],
+  ['Which metal was used after the Stone Age?', 'Bronze', ['Steel','Aluminium']],
+  ['Bronze is made by mixing copper with…', 'tin', ['iron','gold']],
+  ['What is a hunter-gatherer?', 'Someone who hunts animals and collects wild food', ['Someone who works in a shop','A farmer']],
+  ['What did cave paintings mostly show?', 'Animals like horses, bison and deer', ['Kings and queens','Ships']],
+  ['What did Stone Age artists use for red and yellow paint?', 'Ochre, a coloured earth', ['Red plastic','Ketchup']],
+  ['Ötzi the Iceman lived about 5,300 years ago. Where was he found?', 'Frozen in ice in the Alps', ['In a pyramid','Under the sea']],
+  ['What was Ötzi the Iceman wearing?', 'Leather, fur and woven grass', ['A wool suit','Trainers']],
+  ['Why did Ice Age people hunt mammoths?', 'For meat, fur, bones and tusks', ['For their eggs','For their feathers']],
+  ['How did Stone Age people light their caves?', 'With fires and lamps burning animal fat', ['With electric lights','With shop-bought candles']],
+  ['What were Neolithic long barrows used for?', 'Burying the dead', ['Storing boats','Keeping animals']],
+  ['What was a quern used for?', 'Grinding grain into flour', ['Catching fish','Making fire']],
+  ['Which of these lived in Ice Age Britain?', 'The woolly rhinoceros', ['Tyrannosaurus rex','The giraffe']],
+  ['Which came first?', 'Cave paintings', ['Stonehenge','The Romans in Britain']],
+  ['How long did the Stone Age last?', 'More than 2 million years', ['About 100 years','About 1,000 years']],
+  ['What does "BC" mean in a date like 3000 BC?', 'Before Christ: years counted back before year 1', ['Big Castle','British Century']],
+  ['Which tool did Neolithic farmers use to clear forests?', 'A polished stone axe', ['A chainsaw','A bronze sword']],
+];
 
 // Science (sky) — ages 6–7
 const SCI_EASY = [
@@ -559,6 +681,8 @@ if (!nick) try {
   if (m) nick = JSON.parse(decodeURIComponent(m[1]));
 } catch (e) {}
 if (nick) saveNickCookie();
+// Two Stone Age levels were added before Sky Rescue (which used to be level 5 and is now 7). Keep it unlocked for existing players.
+try { if (!localStorage.getItem('vrt-v2')) { if (unlocked >= 5) unlocked = 7; localStorage.setItem('vrt-v2', '1'); persist(); } } catch (e) {}
 function persist(){ try {
   localStorage.setItem('vrt-book', JSON.stringify([...saved])); localStorage.setItem('vrt-mode', mode);
   localStorage.setItem('vrt-unlocked', unlocked); localStorage.setItem('vrt-best', best);
@@ -667,6 +791,7 @@ let W, H, laneH, laneY = [], trailTop, trailBot;
 let L = LEVELS[0], levelIdx = 0;
 let lane = 1, jy = 0;
 const isSky = () => L.world === 'sky';
+const onLand = () => L.world === 'land' || L.world === 'stone';   // the Stone Age uses the land trail and jeep
 const skyS = () => clamp(H * .11, 40, 64);
 const GROUND = () => H - 22;
 const TOPY = () => 66;
@@ -924,11 +1049,11 @@ function buildSprites(){
   seedN = 11;
   SP.clouds = [0, 1, 2].map(() => cloudSprite(160 + srand() * 120));
   SP.storm = [0, 1].map(() => cloudSprite(200, true));
-  if (L.world === 'land') {
+  if (onLand()) {
     SP.far = rangeStrip(Math.max(130, H * .36), {top: .12, amp: .6, ks: [[2, 1], [5, .5], [11, .22], [23, .08]], lit: shade2(L.far, .35), shadow: shade2(L.far, -.12),
-      haze: L.sky[1], mist: .6, tint: L.rain ? .35 : .22, soft: 2, snow: L.mountain ? .32 : 0, contrast: .5});
+      haze: L.sky[1], mist: .6, tint: L.rain ? .35 : .22, soft: 2, snow: (L.mountain || L.snowcaps) ? .32 : 0, contrast: .5});
     SP.mid = rangeStrip(laneH * 1.7, {top: .2, amp: .45, ks: [[3, 1], [7, .4], [16, .15]], lit: shade2(L.hill[0], .12), shadow: L.hill[1],
-      haze: L.sky[1], mist: .45, tint: L.rain ? .2 : .1, soft: 1.3, trees: {n: stripW() / 3, size: laneH * .13, c: [L.pine[0], L.leaf[1]], pine: L.trees === 'pine', mix: .5}});
+      haze: L.sky[1], mist: .45, tint: L.rain ? .2 : .1, soft: 1.3, trees: {n: stripW() / (L.sparse ? 14 : 3), size: laneH * .13, c: [L.pine[0], L.leaf[1]], pine: L.trees === 'pine', mix: .5}});
     SP.fg = foregroundStrip(laneH * .8, 'land');
   } else if (L.world === 'sea') {
     const mid = mixc(L.water[0], L.water[1], .45);
@@ -945,7 +1070,7 @@ function buildSprites(){
     SP.near = rangeStrip(H * .17, {top: .25, amp: .5, ks: [[4, 1], [9, .4], [21, .15]], lit: '#86a565', shadow: '#4c6a3f', haze: L.sky[1], mist: .3, tint: .05, soft: 1,
       trees: {n: stripW() / 2.5, size: H * .016, c: ['#2f4d2a', '#6f9650'], mix: .4}});
   }
-  if (L.world === 'land') {
+  if (onLand()) {
     SP.backTrees = []; SP.frontTrees = [];
     const haze = 'rgba(150,180,205,.38)';
     for (let i = 0; i < 6; i++) {
@@ -968,7 +1093,7 @@ function buildSprites(){
 let phase = 'title';
 let dist = 0, objs = [], battery = 4, meds = 1, litter = 0, litterOut = 0, helped = 0, helpCalls = 0;
 let aIdx = 0, spawnT = 400, slow = 0, inv = 0, shake = 0, flagOut = false, helpT = 0, pooT = 8, tips = {};
-let fx = [], floats = [], rain = [];
+let fx = [], floats = [], rain = [], tlIdx = 0;
 // sky
 let hy = 0, hvy = 0, started = false, colT = 0, prevGy = 0, nextAnimal = 0, skyCount = 0;
 resize(); addEventListener('resize', resize);
@@ -977,7 +1102,9 @@ function startLevel(i){
   levelIdx = i; L = LEVELS[i]; buildSprites();
   dist = 0; objs = []; lane = 1; jy = laneY[1]; battery = 4; meds = 1; litter = 0; litterOut = 0; helped = 0; helpCalls = 0;
   aIdx = 0; spawnT = laneH * 4; slow = 0; inv = 0; shake = 0; flagOut = false; pooT = 6; fx = []; floats = [];
-  rain = (L.rain || L.world === 'sea') ? Array.from({length: L.world === 'sea' ? 40 : 90}, () => ({x: rand(0, W), y: rand(0, H), s: rand(.6, 1.2)})) : [];
+  rain = (L.rain || L.snow || L.world === 'sea') ? Array.from({length: L.world === 'sea' ? 40 : L.snow ? 120 : 90}, () => ({x: rand(0, W), y: rand(0, H), s: rand(.6, 1.2)})) : [];
+  tlIdx = 0;
+  $('#litIco').textContent = L.finds ? '🏺' : '♻️'; $('#litChip').title = L.finds ? 'Artefacts found' : 'Litter picked up';
   const Wd = WORLDS[L.world];
   $('#powIco').textContent = Wd.powIco; $('#powChip').title = Wd.pow;
   $('#hud').classList.toggle('sea', L.world === 'sea');
@@ -1033,6 +1160,9 @@ function update(dt){
     if (o.t === 'thanks') { o.x += spd * .55 * dt; o.life -= dt; }
   }
   const jx = JX();
+  if (L.timeline && tlIdx < L.timeline.length && dist >= L.len * L.timeline[tlIdx][0]) {   // Stone Age timeline milestones
+    const m = L.timeline[tlIdx++][1]; toast('⏳ ' + m, 7000); say(m);
+  }
   if (aIdx < L.animals.length && dist + (W - jx) >= L.len * AT[aIdx]) {
     objs.push({t: 'animal', k: L.animals[aIdx], x: W + 60, y: trailTop - laneH * .3}); aIdx++;
   }
@@ -1078,6 +1208,11 @@ function hit(o){
       if (!tips.net) { tips.net = 1; toast('Lost fishing nets are called ghost nets. They trap sea animals, so hauling them out really helps!'); }
       break;
     case 'litter': {
+      if (L.finds) {   // Stone Age: dig up an artefact and learn about it the first time
+        const f = L.finds[o.v % 4]; litter++; sfx('ding'); float('+1 ' + f.name, '#8a5a1c'); burst(o.x, o.y, '#e0c27a', 12);
+        if (!tips['find' + f.name]) { tips['find' + f.name] = 1; toast(`🏺 ${f.fact}`, 7000); say(f.fact); }
+        break;
+      }
       litter++; sfx('ding'); float('+1 ' + LITTER_NAME[L.world][o.v % 4], '#2b7a3d'); burst(o.x, o.y, '#5cc46a', 10);
       if (!tips.litter) {
         tips.litter = 1;
@@ -1185,6 +1320,7 @@ function updFx(dt){
   for (const f of floats) { f.y -= 40 * dt; f.life -= dt; }
   floats = floats.filter(f => f.life > 0);
   if (L.world === 'sea') for (const d of rain) { d.y -= 60 * d.s * dt; d.x += Math.sin(d.y / 30) * .3; if (d.y < -10) { d.y = H + 10; d.x = rand(0, W); } }
+  else if (L.snow) for (const d of rain) { d.y += 45 * d.s * dt; d.x -= (25 + Math.sin(d.y / 40 + d.s * 9) * 20) * dt; if (d.y > H) { d.y = -10; d.x = rand(0, W + 100); } if (d.x < -10) d.x = W + 10; }
   else for (const d of rain) { d.y += 620 * d.s * dt; d.x -= 110 * dt; if (d.y > H) { d.y = -10; d.x = rand(0, W + 100); } }
 }
 
@@ -1207,7 +1343,8 @@ function drawLand(t){
   const mfog = ctx.createLinearGradient(0, horizon - laneH * .3, 0, horizon + laneH * .2);
   mfog.addColorStop(0, 'rgba(0,0,0,.18)'); mfog.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = mfog; ctx.fillRect(0, horizon - laneH * .3, W, laneH * .5);
-  drawTreeRow(SP.frontTrees, dist * .65, laneH * 1.05, trailTop - laneH * .06, .42, 23);
+  if (L.world === 'stone') { drawStoneProps(t, horizon + laneH * .05); drawLandmark(t, horizon + laneH * .12); }
+  drawTreeRow(SP.frontTrees, dist * .65, laneH * 1.05, trailTop - laneH * .06, L.world === 'stone' ? .72 : .42, 23);   // fewer trees so the props and landmark show
   drawTrail();
 }
 // Soft beams of sunlight slanting down from the sun through the haze.
@@ -1296,6 +1433,217 @@ function drawTrail(){
       ctx.beginPath(); ctx.moveTo(x, edge - dir * 3); ctx.lineTo(x + (hash(i) - .5) * 5, edge + dir * h * .55); ctx.stroke();
     }
   }
+}
+
+
+// ======================= STONE AGE =======================
+// Scenery props on the grass behind the trail, spaced like a tree row and scrolling at the same speed.
+function drawStoneProps(t, base){
+  const sp = laneH * 1.5, off = dist * .55, first = Math.floor(off / sp) - 1, s = laneH * .5, ice = L.era === 'old';
+  for (let i = first; i < first + W / sp + 3; i++) {
+    const x = i * sp - off + (hash(i + 5) - .5) * sp * .4, k = hash(i * 1.37 + 2);
+    if (ice) {
+      if (k < .28) { for (let m = 0; m < 2 + (hash(i) * 2 | 0); m++) drawMammoth(x + m * s * .9, base - m * 2, s * (.75 + hash(i + m) * .3), hash(i + m * 3) < .5); }
+      else if (k < .5) drawHideTent(x, base, s, t, i);
+      else if (k < .66) drawSnowBoulder(x, base, s, i);
+    } else {
+      if (k < .26) drawRoundhouse(x, base, s, t, i);
+      else if (k < .4) drawStandingStones(x, base, s, i);
+      else if (k < .58) drawWheat(x, base, s, t, i);
+      else if (k < .7) drawSheepPen(x, base, s, t, i);
+    }
+  }
+}
+function drawMammoth(x, y, s, flip){
+  ctx.save(); ctx.translate(x, y); if (flip) ctx.scale(-1, 1);
+  softShadow(-s * .1, 0, s * .5, s * .07, .3);
+  const fur = ctx.createLinearGradient(0, -s * .9, 0, 0); fur.addColorStop(0, '#7a5434'); fur.addColorStop(1, '#3f2a19');
+  ctx.fillStyle = fur;
+  for (const lx of [-.32, -.15, .12, .28]) ctx.fillRect(lx * s, -s * .32, s * .13, s * .32);           // legs
+  ctx.beginPath(); ctx.ellipse(-s * .05, -s * .45, s * .45, s * .3, 0, 0, 7); ctx.fill();                  // body
+  ctx.beginPath(); ctx.arc(s * .34, -s * .62, s * .2, 0, 7); ctx.fill();                                     // domed head
+  ctx.beginPath(); ctx.moveTo(-s * .25, -s * .72); ctx.quadraticCurveTo(s * .1, -s * .9, s * .3, -s * .78); ctx.lineTo(s * .2, -s * .5); ctx.fill(); // shoulder hump
+  ctx.strokeStyle = '#3f2a19'; ctx.lineWidth = s * .09; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(s * .48, -s * .55); ctx.quadraticCurveTo(s * .6, -s * .25, s * .5, -s * .08); ctx.stroke();   // trunk
+  ctx.strokeStyle = '#efe6cf'; ctx.lineWidth = s * .045;
+  ctx.beginPath(); ctx.moveTo(s * .42, -s * .48); ctx.quadraticCurveTo(s * .75, -s * .38, s * .66, -s * .62); ctx.stroke();  // tusk
+  ctx.strokeStyle = 'rgba(160,120,80,.45)'; ctx.lineWidth = 1.2;                                                     // shaggy fur
+  for (let k = 0; k < 9; k++) { const fx2 = -s * .42 + k * s * .1; ctx.beginPath(); ctx.moveTo(fx2, -s * .3); ctx.lineTo(fx2 - s * .02, -s * .18); ctx.stroke(); }
+  ctx.restore();
+}
+function drawHideTent(x, y, s, t, i){
+  softShadow(x - s * .1, y, s * .5, s * .08, .3);
+  const g = ctx.createLinearGradient(x - s * .45, 0, x + s * .45, 0); g.addColorStop(0, '#6e5236'); g.addColorStop(1, '#b89466');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y - s * 1.05); ctx.lineTo(x + s * .48, y); ctx.lineTo(x - s * .48, y); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,40,20,.35)'; ctx.lineWidth = 1; for (const k of [-.25, 0, .25]) { ctx.beginPath(); ctx.moveTo(x, y - s * 1.05); ctx.lineTo(x + k * s * 1.6, y); ctx.stroke(); }
+  ctx.strokeStyle = '#4a3522'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - s * .12, y - s * 1.2); ctx.lineTo(x + s * .05, y - s * .9); ctx.moveTo(x + s * .12, y - s * 1.2); ctx.lineTo(x - s * .05, y - s * .9); ctx.stroke();
+  ctx.fillStyle = '#2a1d12'; ctx.beginPath(); ctx.moveTo(x + s * .02, y - s * .4); ctx.lineTo(x + s * .16, y); ctx.lineTo(x - s * .12, y); ctx.fill();
+  campfire(x + s * .6, y, s * .35, t, i);
+}
+function campfire(x, y, s, t, i){
+  ctx.strokeStyle = '#3b2816'; ctx.lineWidth = s * .12; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - s * .35, y); ctx.lineTo(x + s * .3, y - s * .12); ctx.moveTo(x + s * .35, y); ctx.lineTo(x - s * .3, y - s * .12); ctx.stroke();
+  const f = 1 + Math.sin(t * 13 + i) * .12 + Math.sin(t * 7.3 + i) * .08;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const gl = ctx.createRadialGradient(x, y - s * .2, 0, x, y - s * .2, s * 1.4); gl.addColorStop(0, 'rgba(255,170,60,.45)'); gl.addColorStop(1, 'rgba(255,120,30,0)');
+  ctx.fillStyle = gl; ctx.fillRect(x - s * 1.4, y - s * 1.6, s * 2.8, s * 2.8);
+  ctx.restore();
+  ctx.fillStyle = '#ff8a1e'; ctx.beginPath(); ctx.moveTo(x - s * .22, y - s * .05); ctx.quadraticCurveTo(x - s * .1, y - s * .55 * f, x, y - s * .75 * f); ctx.quadraticCurveTo(x + s * .12, y - s * .5 * f, x + s * .22, y - s * .05); ctx.fill();
+  ctx.fillStyle = '#ffd25a'; ctx.beginPath(); ctx.moveTo(x - s * .1, y - s * .05); ctx.quadraticCurveTo(x, y - s * .45 * f, x + s * .1, y - s * .05); ctx.fill();
+  smoke(x, y - s * .7, s, t, i);
+}
+function smoke(x, y, s, t, i){
+  for (let k = 0; k < 5; k++) {
+    const q = ((t * .35 + k / 5 + hash(i) ) % 1), r = s * (.25 + q * .7);
+    ctx.fillStyle = `rgba(180,180,180,${.28 * (1 - q)})`; ctx.beginPath(); ctx.arc(x - q * s * 1.2 + Math.sin(t + k) * s * .1, y - q * s * 3, r, 0, 7); ctx.fill();
+  }
+}
+function drawSnowBoulder(x, y, s, i){
+  softShadow(x - s * .1, y, s * .5, s * .08, .3);
+  const g = ctx.createLinearGradient(x - s * .5, 0, x + s * .5, 0); g.addColorStop(0, '#5d5f63'); g.addColorStop(1, '#a3a6aa');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - s * .5, y); ctx.quadraticCurveTo(x - s * .55, y - s * .4, x - s * .15, y - s * .55); ctx.quadraticCurveTo(x + s * .3, y - s * .6, x + s * .5, y - s * .2); ctx.lineTo(x + s * .5, y); ctx.fill();
+  ctx.fillStyle = '#f4f8fb'; ctx.beginPath(); ctx.moveTo(x - s * .45, y - s * .3); ctx.quadraticCurveTo(x - s * .3, y - s * .55, x - s * .1, y - s * .55); ctx.quadraticCurveTo(x + s * .3, y - s * .6, x + s * .42, y - s * .28); ctx.quadraticCurveTo(x, y - s * .38, x - s * .45, y - s * .3); ctx.fill();
+}
+function drawRoundhouse(x, y, s, t, i){
+  softShadow(x - s * .1, y, s * .65, s * .08, .3);
+  const wg = ctx.createLinearGradient(x - s * .5, 0, x + s * .5, 0); wg.addColorStop(0, '#6b4f33'); wg.addColorStop(1, '#a8845a');
+  ctx.fillStyle = wg; ctx.fillRect(x - s * .5, y - s * .38, s, s * .38);                              // wattle-and-daub wall
+  ctx.strokeStyle = 'rgba(50,35,20,.35)'; ctx.lineWidth = 1; for (let k = 1; k < 8; k++) { ctx.beginPath(); ctx.moveTo(x - s * .5 + k * s / 8, y - s * .38); ctx.lineTo(x - s * .5 + k * s / 8, y); ctx.stroke(); }
+  ctx.fillStyle = '#2b1e12'; ctx.fillRect(x - s * .08, y - s * .26, s * .16, s * .26);                // doorway
+  const rg = ctx.createLinearGradient(x - s * .62, 0, x + s * .62, 0); rg.addColorStop(0, '#7d6232'); rg.addColorStop(.55, '#c5a35c'); rg.addColorStop(1, '#e0c27a');
+  ctx.fillStyle = rg; ctx.beginPath(); ctx.moveTo(x, y - s * 1.15); ctx.lineTo(x + s * .66, y - s * .32); ctx.lineTo(x - s * .66, y - s * .32); ctx.fill();   // thatched roof
+  ctx.strokeStyle = 'rgba(90,65,30,.4)'; for (let k = -5; k <= 5; k++) { ctx.beginPath(); ctx.moveTo(x, y - s * 1.12); ctx.lineTo(x + k * s * .13, y - s * .33); ctx.stroke(); }
+  smoke(x, y - s * 1.15, s * .55, t, i);
+}
+function drawStandingStones(x, y, s, i){
+  for (let k = 0; k < 3; k++) {
+    const sx = x + (k - 1) * s * .45, h = s * (.7 + hash(i + k) * .45), w = s * (.2 + hash(i * 2 + k) * .1);
+    softShadow(sx - w * .4, y, w * 1.2, s * .05, .3);
+    const g = ctx.createLinearGradient(sx - w, 0, sx + w, 0); g.addColorStop(0, '#6c6e6c'); g.addColorStop(1, '#b4b5ae');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(sx - w, y); ctx.lineTo(sx - w * .85, y - h * .9); ctx.quadraticCurveTo(sx, y - h * 1.05, sx + w * .85, y - h * .92); ctx.lineTo(sx + w, y); ctx.fill();
+    ctx.fillStyle = 'rgba(190,200,120,.5)'; ctx.beginPath(); ctx.arc(sx + w * .3, y - h * .5, w * .18, 0, 7); ctx.fill();   // lichen
+  }
+}
+function drawWheat(x, y, s, t, i){
+  ctx.strokeStyle = '#b8923d'; ctx.lineWidth = 1.4;
+  for (let k = 0; k < 26; k++) {
+    const sx = x - s * .9 + k * s * .07, h = s * (.4 + hash(i * 7 + k) * .2), sw = Math.sin(t * 1.5 + k * .4) * s * .04;
+    ctx.beginPath(); ctx.moveTo(sx, y); ctx.lineTo(sx + sw, y - h); ctx.stroke();
+    ctx.fillStyle = '#d9b558'; ctx.beginPath(); ctx.ellipse(sx + sw, y - h, s * .025, s * .07, sw / s, 0, 7); ctx.fill();
+  }
+}
+function drawSheepPen(x, y, s, t, i){
+  ctx.strokeStyle = '#6b4f33'; ctx.lineWidth = 2;
+  ctx.beginPath(); for (let k = 0; k < 5; k++) { const px = x - s * .9 + k * s * .45; ctx.moveTo(px, y); ctx.lineTo(px, y - s * .32); }
+  ctx.moveTo(x - s * .9, y - s * .26); ctx.lineTo(x + s * .9, y - s * .26); ctx.moveTo(x - s * .9, y - s * .12); ctx.lineTo(x + s * .9, y - s * .12); ctx.stroke();
+  for (let k = 0; k < 3; k++) {
+    const sx = x - s * .5 + k * s * .5 + hash(i + k) * s * .2, sy = y - s * .05 - (k % 2) * s * .04, bob = Math.sin(t * 2 + k + i) * 1;
+    ctx.fillStyle = '#2a2622'; ctx.fillRect(sx - s * .1, sy - s * .08, s * .03, s * .1); ctx.fillRect(sx + s * .06, sy - s * .08, s * .03, s * .1);
+    const g = ctx.createRadialGradient(sx + s * .04, sy - s * .2, 1, sx, sy - s * .14, s * .18); g.addColorStop(0, '#fbf8f0'); g.addColorStop(1, '#c9c1b0');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(sx, sy - s * .14, s * .17, s * .1, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#2a2622'; ctx.beginPath(); ctx.ellipse(sx + s * .17, sy - s * .18 + bob, s * .05, s * .045, 0, 0, 7); ctx.fill();
+  }
+}
+// The level's destination grows on the horizon as you get closer, like Mount Evans.
+function drawLandmark(t, base){
+  const p = Math.min(1, dist / L.len), mx = W * 1.15 - p * W * .5, sc = laneH * (.7 + p * .5);
+  if (L.landmark === 'stonehenge') {
+    const ring = [[-1.3, .95], [-.85, 1], [-.35, 1.05], [.2, 1], [.7, .95], [1.15, .9]];
+    softShadow(mx - sc * .2, base, sc * 1.6, sc * .12, .3);
+    ring.forEach(([dx, hk], k) => {
+      const sx = mx + dx * sc, h = sc * hk, w = sc * .16;
+      const g = ctx.createLinearGradient(sx - w, 0, sx + w, 0); g.addColorStop(0, '#6f706a'); g.addColorStop(1, '#bdbcb1');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(sx - w, base); ctx.lineTo(sx - w * .9, base - h); ctx.lineTo(sx + w * .9, base - h); ctx.lineTo(sx + w, base); ctx.fill();
+      if (k % 2 === 0 && ring[k + 1]) {      // lintel resting on each pair of uprights (a trilithon)
+        const ex = mx + ring[k + 1][0] * sc, ly = base - Math.min(h, sc * ring[k + 1][1]) - sc * .14;
+        const lg = ctx.createLinearGradient(0, ly, 0, ly + sc * .14); lg.addColorStop(0, '#c9c8bd'); lg.addColorStop(1, '#7c7d76');
+        ctx.fillStyle = lg; ctx.fillRect(sx - w, ly, ex - sx + w * 2, sc * .14);
+      }
+    });
+    for (const dx of [-.6, .45]) { const sx = mx + dx * sc; ctx.fillStyle = '#8a8b84'; ctx.fillRect(sx - sc * .07, base - sc * .45, sc * .14, sc * .45); }   // smaller bluestones
+    landmarkLabel('Stonehenge', mx, base - sc * 1.25);
+  } else {
+    // a rocky cliff with a cave mouth, a fire glowing inside and paintings by the entrance
+    const w = sc * 2.2, h = sc * 1.5;
+    const g = ctx.createLinearGradient(mx - w / 2, 0, mx + w / 2, 0); g.addColorStop(0, '#5a5650'); g.addColorStop(.6, '#8d877d'); g.addColorStop(1, '#a8a196');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(mx - w / 2, base);
+    ctx.lineTo(mx - w * .45, base - h * .7); ctx.lineTo(mx - w * .25, base - h * .95); ctx.lineTo(mx + w * .05, base - h); ctx.lineTo(mx + w * .3, base - h * .85); ctx.lineTo(mx + w * .5, base - h * .5); ctx.lineTo(mx + w * .55, base); ctx.fill();
+    ctx.fillStyle = '#f2f6f9'; ctx.beginPath(); ctx.moveTo(mx - w * .3, base - h * .9); ctx.lineTo(mx - w * .25, base - h * .95); ctx.lineTo(mx + w * .05, base - h); ctx.lineTo(mx + w * .3, base - h * .85); ctx.quadraticCurveTo(mx, base - h * .88, mx - w * .3, base - h * .9); ctx.fill();
+    ctx.fillStyle = '#1a120c'; ctx.beginPath(); ctx.moveTo(mx - w * .18, base); ctx.quadraticCurveTo(mx - w * .2, base - h * .55, mx + w * .02, base - h * .58); ctx.quadraticCurveTo(mx + w * .22, base - h * .55, mx + w * .2, base); ctx.fill();
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const fl = .8 + Math.sin(t * 9) * .1, gl = ctx.createRadialGradient(mx, base - h * .1, 0, mx, base - h * .1, w * .25 * fl);
+    gl.addColorStop(0, 'rgba(255,150,50,.6)'); gl.addColorStop(1, 'rgba(255,110,30,0)'); ctx.fillStyle = gl; ctx.fillRect(mx - w * .3, base - h * .5, w * .6, h * .5);
+    ctx.restore();
+    // red ochre handprint and a horse painted on the rock
+    ctx.fillStyle = 'rgba(160,50,30,.75)';
+    const hx = mx + w * .3, hy = base - h * .4, hs = sc * .1;
+    ctx.beginPath(); ctx.ellipse(hx, hy, hs * .5, hs * .6, 0, 0, 7); ctx.fill();
+    for (let f = 0; f < 4; f++) { ctx.beginPath(); ctx.ellipse(hx - hs * .35 + f * hs * .24, hy - hs * .85, hs * .09, hs * .3, 0, 0, 7); ctx.fill(); }
+    ctx.beginPath(); ctx.ellipse(hx + hs * .55, hy - hs * .15, hs * .12, hs * .28, -.8, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,30,20,.8)'; ctx.lineWidth = 2; const ax = mx - w * .33, ay = base - h * .42, as = sc * .18;
+    ctx.beginPath(); ctx.ellipse(ax, ay, as * .5, as * .22, 0, 0, 7); ctx.moveTo(ax + as * .45, ay - as * .1); ctx.lineTo(ax + as * .75, ay - as * .4);
+    ctx.moveTo(ax - as * .3, ay + as * .18); ctx.lineTo(ax - as * .35, ay + as * .5); ctx.moveTo(ax + as * .3, ay + as * .18); ctx.lineTo(ax + as * .32, ay + as * .5); ctx.stroke();
+    landmarkLabel('Painted Cave', mx, base - h - 16);
+  }
+}
+function landmarkLabel(txt, x, y){
+  ctx.font = '700 24px Gaegu, cursive'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillText(txt, x + 1, y + 1); ctx.fillStyle = '#fff'; ctx.fillText(txt, x, y);
+}
+// Artefacts to dig up, each drawn as the real object with a glint so it reads as treasure.
+function drawFind(o, s, t){
+  const f = L.finds[o.v % 4].name, b = Math.sin(t * 3 + o.ph) * s * .02;
+  softShadow(o.x, o.y + s * .2, s * .3, s * .06, .35);
+  const glow = ctx.createRadialGradient(o.x, o.y + b, 0, o.x, o.y + b, s * .48);
+  glow.addColorStop(0, 'rgba(255,240,190,.75)'); glow.addColorStop(1, 'rgba(255,240,190,0)');
+  ctx.fillStyle = glow; ctx.fillRect(o.x - s * .5, o.y + b - s * .5, s, s);
+  ctx.save(); ctx.translate(o.x, o.y + b); ctx.scale(1.6, 1.6); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const flint = (a, c) => { const g = ctx.createLinearGradient(-s * .15, -s * .2, s * .15, s * .2); g.addColorStop(0, a); g.addColorStop(1, c); return g; };
+  if (f === 'flint hand axe') {
+    ctx.rotate(.5); ctx.fillStyle = flint('#a89a86', '#5c5244');
+    ctx.beginPath(); ctx.moveTo(0, -s * .22); ctx.quadraticCurveTo(s * .15, -s * .05, s * .12, s * .12); ctx.quadraticCurveTo(0, s * .2, -s * .12, s * .12); ctx.quadraticCurveTo(-s * .15, -s * .05, 0, -s * .22); ctx.fill();
+    ctx.strokeStyle = 'rgba(40,32,24,.4)'; ctx.lineWidth = 1;
+    for (const [a, b2, c, d] of [[-.08, -.08, .04, -.02], [.08, -.02, -.02, .06], [-.09, .06, .02, .12], [.02, -.16, -.04, -.06]]) { ctx.beginPath(); ctx.moveTo(a * s, b2 * s); ctx.lineTo(c * s, d * s); ctx.stroke(); }
+  } else if (f === 'bone needle') {
+    ctx.rotate(-.7); ctx.strokeStyle = '#efe4c8'; ctx.lineWidth = s * .035; ctx.beginPath(); ctx.moveTo(-s * .2, 0); ctx.lineTo(s * .22, 0); ctx.stroke();
+    ctx.strokeStyle = '#b9a984'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(-s * .16, 0, s * .025, s * .01, 0, 0, 7); ctx.stroke();
+    ctx.strokeStyle = '#8a6a45'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-s * .16, 0); ctx.quadraticCurveTo(-s * .25, s * .1, -s * .1, s * .14); ctx.stroke();
+  } else if (f === 'spear point') {
+    ctx.rotate(-.6); ctx.strokeStyle = '#7a5a36'; ctx.lineWidth = s * .04; ctx.beginPath(); ctx.moveTo(-s * .26, 0); ctx.lineTo(s * .04, 0); ctx.stroke();
+    ctx.strokeStyle = '#3f2c1a'; ctx.lineWidth = s * .05; ctx.beginPath(); ctx.moveTo(s * .0, 0); ctx.lineTo(s * .06, 0); ctx.stroke();
+    ctx.fillStyle = flint('#b8ab96', '#5a5044'); ctx.beginPath(); ctx.moveTo(s * .04, 0); ctx.quadraticCurveTo(s * .14, -s * .07, s * .28, 0); ctx.quadraticCurveTo(s * .14, s * .07, s * .04, 0); ctx.fill();
+  } else if (f === 'shell necklace') {
+    ctx.strokeStyle = '#6b4f33'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(0, -s * .06, s * .18, .3, Math.PI - .3); ctx.stroke();
+    for (let k = 0; k < 7; k++) { const a = .35 + k * (Math.PI - .7) / 6, cx = Math.cos(a) * s * .18, cy = -s * .06 + Math.sin(a) * s * .18;
+      ctx.fillStyle = k % 2 ? '#f4ead6' : '#e2c9a6'; ctx.beginPath(); ctx.ellipse(cx, cy + s * .02, s * .035, s * .045, a - Math.PI / 2, 0, 7); ctx.fill();
+      ctx.strokeStyle = 'rgba(120,90,60,.5)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(cx, cy - s * .01); ctx.lineTo(cx, cy + s * .05); ctx.stroke(); }
+  } else if (f === 'polished stone axe') {
+    ctx.rotate(-.4); ctx.strokeStyle = '#7a5a36'; ctx.lineWidth = s * .045; ctx.beginPath(); ctx.moveTo(-s * .05, s * .22); ctx.lineTo(s * .02, -s * .18); ctx.stroke();
+    const g = ctx.createLinearGradient(-s * .1, 0, s * .2, 0); g.addColorStop(0, '#3f5a50'); g.addColorStop(.5, '#7f9a8c'); g.addColorStop(1, '#4b6458');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-s * .03, -s * .2); ctx.lineTo(s * .2, -s * .24); ctx.quadraticCurveTo(s * .25, -s * .14, s * .2, -s * .04); ctx.lineTo(-s * .03, -s * .1); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(s * .04, -s * .2, s * .12, s * .02);
+  } else if (f === 'clay pot') {
+    const g = ctx.createLinearGradient(-s * .15, 0, s * .15, 0); g.addColorStop(0, '#7a4a28'); g.addColorStop(.6, '#b87a48'); g.addColorStop(1, '#8a5530');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-s * .12, -s * .2); ctx.quadraticCurveTo(-s * .2, 0, -s * .1, s * .16); ctx.lineTo(s * .1, s * .16); ctx.quadraticCurveTo(s * .2, 0, s * .12, -s * .2); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,30,15,.55)'; ctx.lineWidth = 1;
+    for (const yy of [-.12, .02]) { ctx.beginPath(); for (let k = 0; k <= 8; k++) ctx.lineTo(-s * .14 + k * s * .035, s * (yy + (k % 2 ? .03 : 0))); ctx.stroke(); }
+  } else if (f === 'flint arrowhead') {
+    ctx.rotate(.3); ctx.fillStyle = flint('#a39684', '#4f463b');
+    ctx.beginPath(); ctx.moveTo(0, -s * .2); ctx.lineTo(s * .12, s * .1); ctx.lineTo(s * .04, s * .06); ctx.lineTo(s * .03, s * .16); ctx.lineTo(-s * .03, s * .16); ctx.lineTo(-s * .04, s * .06); ctx.lineTo(-s * .12, s * .1); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(30,25,20,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, -s * .16); ctx.lineTo(0, s * .12); ctx.stroke();
+  } else {   // quern stone: a saddle-shaped base with a rubbing stone and a little flour
+    const g = ctx.createLinearGradient(0, -s * .05, 0, s * .15); g.addColorStop(0, '#a5a29a'); g.addColorStop(1, '#5d5a54');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-s * .26, 0); ctx.quadraticCurveTo(0, s * .08, s * .26, 0); ctx.lineTo(s * .24, s * .14); ctx.lineTo(-s * .24, s * .14); ctx.fill();
+    ctx.fillStyle = 'rgba(250,246,235,.85)'; ctx.beginPath(); ctx.ellipse(s * .02, s * .04, s * .12, s * .025, 0, 0, 7); ctx.fill();
+    const g2 = ctx.createRadialGradient(-s * .02, -s * .08, 1, 0, -s * .05, s * .1); g2.addColorStop(0, '#b8b5ad'); g2.addColorStop(1, '#6a6760');
+    ctx.fillStyle = g2; ctx.beginPath(); ctx.ellipse(-s * .04, -s * .04, s * .1, s * .06, 0, 0, 7); ctx.fill();
+  }
+  ctx.restore();
+  // twinkling glint
+  const tw = (Math.sin(t * 4 + o.ph * 3) + 1) / 2, gx = o.x + s * .22, gy = o.y - s * .24 + b, gr2 = s * (.05 + tw * .06);
+  ctx.fillStyle = `rgba(255,236,160,${.4 + tw * .6})`; ctx.beginPath();
+  ctx.moveTo(gx, gy - gr2 * 2); ctx.lineTo(gx + gr2 * .3, gy); ctx.lineTo(gx, gy + gr2 * 2); ctx.lineTo(gx - gr2 * .3, gy); ctx.closePath();
+  ctx.moveTo(gx - gr2 * 2, gy); ctx.lineTo(gx, gy + gr2 * .3); ctx.lineTo(gx + gr2 * 2, gy); ctx.lineTo(gx, gy - gr2 * .3); ctx.closePath(); ctx.fill();
 }
 
 // ======================= SEA SCENE =======================
@@ -1580,11 +1928,11 @@ function drawObj(o, t){
       }
       for (const fxp of [-n / 2, 0, n / 2]) { ctx.fillStyle = '#ff8a3d'; ctx.beginPath(); ctx.arc(fxp, -n / 2 - 4, 5, 0, 7); ctx.fill(); }
       ctx.restore(); break; }
-    case 'litter': drawLitter(o, s, t); break;
+    case 'litter': L.finds ? drawFind(o, s, t) : drawLitter(o, s, t); break;
     case 'med': {
       if (isSky()) { drawMedBalloon(o, s, t); break; }
       const b = Math.sin(t * 4 + o.ph) * s * .04;
-      if (L.world === 'land') softShadow(o.x, o.y + s * .2, s * .2, s * .05, .3);
+      if (onLand()) softShadow(o.x, o.y + s * .2, s * .2, s * .05, .3);
       const glow = ctx.createRadialGradient(o.x, o.y + b, 0, o.x, o.y + b, s * .42);
       glow.addColorStop(0, 'rgba(255,255,255,.7)'); glow.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = glow; ctx.fillRect(o.x - s * .45, o.y + b - s * .45, s * .9, s * .9);
@@ -1633,7 +1981,7 @@ function drawLitter(o, s, t){
     } else drawBag(s);
     ctx.restore(); return;
   }
-  if (world === 'land') softShadow(o.x, o.y + s * .14, s * .2, s * .05, .35);
+  if (onLand()) softShadow(o.x, o.y + s * .14, s * .2, s * .05, .35);
   ctx.save(); ctx.translate(o.x, o.y + (world === 'sea' ? Math.sin(t * 1.5 + o.ph) * s * .04 : s * .04));
   if (world === 'sea' && v === 0) {
     const g = ctx.createRadialGradient(-s * .05, -s * .05, s * .05, 0, 0, s * .26);
@@ -1693,7 +2041,7 @@ function drawBlimp(x, y, s){
 function drawAnimal(o, t){
   const s = isSky() ? skyS() * 1.15 : laneH, a = ANIMALS[o.k];
   const y = o.y;
-  if (L.world === 'land') softShadow(o.x, y + s * .38, s * .35, s * .07, .35);
+  if (onLand()) softShadow(o.x, y + s * .38, s * .35, s * .07, .35);
   if (L.world === 'sea') drawLedge(o.x, y + s * .4, s);
   emoji(a.e, o.x, y, s * (a.boss ? 1.2 : 1.0), a.f);
   const p = 1 + Math.sin(t * 6) * .08, bx = o.x + s * .45, by = y - s * .5;
@@ -2054,7 +2402,7 @@ function drawHelper(t){
 
 // ======================= MAIN DRAW =======================
 function draw(t){
-  if (L.world === 'land') drawLand(t); else if (L.world === 'sea') drawSea(t); else drawSkyScene(t);
+  if (onLand()) drawLand(t); else if (L.world === 'sea') drawSea(t); else drawSkyScene(t);
   if (isSky()) {
     for (const o of objs) if (o.t === 'peak') drawPeak(o);
     for (const o of objs) if (o.t === 'storm') drawStorm(o, t);
@@ -2093,6 +2441,8 @@ function draw(t){
       ctx.strokeStyle = 'rgba(235,250,255,.5)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(d.x, d.y, r, 3.6, 6); ctx.stroke();
       ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.beginPath(); ctx.arc(d.x + r * .35, d.y - r * .4, r * .25, 0, 7); ctx.fill();
     }
+  } else if (L.snow && phase !== 'title') {
+    for (const d of rain) { ctx.fillStyle = `rgba(255,255,255,${.5 + d.s * .35})`; ctx.beginPath(); ctx.arc(d.x, d.y, .8 + d.s * 1.8, 0, 7); ctx.fill(); }
   } else if (L.rain && phase !== 'title') {
     ctx.fillStyle = 'rgba(40,55,75,.14)'; ctx.fillRect(0, 0, W, H);
     ctx.strokeStyle = 'rgba(200,220,240,.55)'; ctx.lineWidth = 1.4; ctx.beginPath();
@@ -2135,7 +2485,7 @@ addEventListener('keydown', e => {
 const screens = ['titleScr', 'rescueScr', 'doneScr', 'bookScr', 'pauseScr', 'flightScr', 'boardScr'];
 function showOnly(id){ screens.forEach(s => $('#' + s).hidden = s !== id); }
 let toastTimer;
-function toast(msg){ const el = $('#toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3000); }
+function toast(msg, ms = 3000){ const el = $('#toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), ms); }
 
 function updateHud(){
   $('#bat').innerHTML = Array.from({length: 5}, (_, i) => `<i class="${i < battery ? 'on' : ''}"></i>`).join('');
@@ -2191,12 +2541,17 @@ function spelling(){
   const [w, e, wrong] = deal('spell-hard', SPELL_HARD);
   return {label:'Which spelling is right?', html:`<span class="pic">${e}</span>`, done:`<span class="pic">${e}</span>${w}`, kind:'word', ans:w, choices:shuffle([w, ...wrong]), speak:`Spell the word: ${w}.`};
 }
+function history(){
+  const [q, a, wrong] = mode === 'easy' ? deal('hist-easy', HIST_EASY) : deal('hist-hard', HIST_HARD);
+  const choices = shuffle([a, ...wrong]);
+  return {label:'History question', html:q, done:q, kind:'text', ans:a, choices, speak:`${q.replace('…', ' dot dot dot')} Is it: ${choices[0]}, ${choices[1]}, or ${choices[2]}?`};
+}
 function science(){
   const [q, a, wrong] = mode === 'easy' ? deal('sci-easy', SCI_EASY) : deal('sci-hard', SCI_HARD);
   const choices = shuffle([a, ...wrong]);
   return {label:'Science question', html:q, done:q, kind:'text', ans:a, choices, speak:`${q.replace('…', ' dot dot dot')} Is it: ${choices[0]}, ${choices[1]}, or ${choices[2]}?`};
 }
-const makeQ = () => ({land: maths, sea: spelling, sky: science})[L.world]();
+const makeQ = () => ({land: maths, sea: spelling, stone: history, sky: science})[L.world]();
 
 function hearts(){
   const scene = $('#rScene');
@@ -2279,12 +2634,20 @@ function levelDone(){
   const litterNeed = Math.ceil(litterOut * .75), clean = litter >= litterNeed;
   const stars = 1 + (helped === L.animals.length ? 1 : 0) + (clean ? 1 : 0);
   const titles = {'Forest Trail':'Forest Trail complete!', 'Muddy Hills':'Muddy Hills complete!', 'Mount Evans':'You made it to the top of Mount Evans!',
-    'Coral Reef':'You crossed the Coral Reef!', 'Voyage to Hawaii':'Aloha! You made it to Hawaii!'};
+    'Coral Reef':'You crossed the Coral Reef!', 'Voyage to Hawaii':'Aloha! You made it to Hawaii!',
+    'Ice Age Tundra':'You found the painted cave!', 'Stone Age Farm':'You made it to Stonehenge!'};
   $('#dTitle').textContent = titles[L.name] || `${L.name} complete!`;
   $('#dStars').innerHTML = [0, 1, 2].map(i => `<span class="${i < stars ? '' : 'off'}">★</span>`).join('');
   $('#dAni').textContent = helped; $('#dLit').textContent = litter; $('#dHeli').textContent = helpCalls;
-  $('#dMsg').textContent = clean ? 'You left it cleaner than you found it. The animals say thank you!'
-    : `You picked up ${litter} of ${litterOut} pieces of litter. Pick up ${litterNeed} to earn the planet star.`;
+  $('#dLitLbl').textContent = L.finds ? 'artefacts found' : 'litter picked up';
+  $('#dMsg').textContent = L.finds
+    ? (clean ? 'Brilliant digging! The museum is thrilled with your finds.' : `You found ${litter} of ${litterOut} artefacts. Find ${litterNeed} to earn the museum star.`)
+    : (clean ? 'You left it cleaner than you found it. The animals say thank you!' : `You picked up ${litter} of ${litterOut} pieces of litter. Pick up ${litterNeed} to earn the planet star.`);
+  $('#dTL').hidden = !L.era;
+  if (L.era) {
+    document.querySelectorAll('#dTL .tlbar span').forEach(sp => sp.classList.toggle('here', sp.dataset.era === L.era));
+    $('#dTLtxt').textContent = L.outro || 'Next stop: the New Stone Age, when people started to farm.';
+  }
   const before = unlocked; unlocked = Math.max(unlocked, levelIdx + 1); persist();
   const next = LEVELS[levelIdx + 1];
   const u = $('#dUnlock'); u.hidden = true;
@@ -2333,11 +2696,11 @@ function poo(){
 // ----- title / world picker -----
 function renderWorlds(){
   const wrap = $('#worlds'); wrap.innerHTML = '';
-  for (const wk of ['land', 'sea', 'sky']) {
+  for (const wk of ['land', 'sea', 'stone', 'sky']) {
     const Wd = WORLDS[wk], idxs = LEVELS.map((l, i) => l.world === wk ? i : -1).filter(i => i >= 0);
     const open = unlocked >= idxs[0];
     const div = document.createElement('div'); div.className = `world ${wk}${open ? '' : ' locked'}`;
-    const prevWorld = {sea:'all 3 land trails', sky:'both sea levels'}[wk];
+    const prevWorld = {sea:'all 3 land trails', stone:'both sea levels', sky:'both Stone Age levels'}[wk];
     div.innerHTML = `<div class="whead"><b>${Wd.icon} ${Wd.title}</b><span>${Wd.subject} questions</span></div>` +
       (open ? '' : `<span class="muted">🔒 Finish ${prevWorld} to unlock</span>`);
     const lv = document.createElement('div'); lv.className = 'lvls';
@@ -2371,7 +2734,7 @@ renderWorlds();
 function renderBook(){
   const keys = Object.keys(ANIMALS);
   $('#bookCount').textContent = `${keys.filter(k => saved.has(k)).length} of ${keys.length} animals helped`;
-  $('#bookGrid').innerHTML = ['land', 'sea', 'sky'].map(wk =>
+  $('#bookGrid').innerHTML = ['land', 'sea', 'stone', 'sky'].map(wk =>
     `<div class="bookHead">${WORLDS[wk].icon} ${WORLDS[wk].title}</div><div class="book">` +
     keys.filter(k => ANIMALS[k].w === wk).map(k => {
       const a = ANIMALS[k], got = saved.has(k);
