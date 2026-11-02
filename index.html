@@ -156,6 +156,14 @@ p{margin:0;line-height:1.45;font-size:16px}
 .unlock{background:#fff6d6;border:2.5px solid var(--ink);border-radius:14px;padding:10px;font-weight:800}
 .record{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:3px 12px;font-weight:800;font-size:14px}
 
+/* Key words */
+.words{display:flex;flex-direction:column;gap:8px}
+.word{background:#f3eadb;border:2.5px solid var(--ink);border-radius:14px;padding:10px 12px;text-align:left}
+.word b{display:block;font-family:var(--display);font-size:28px;line-height:1}
+.word span{font-weight:700;font-size:16px}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.gloss button{border:2.5px solid var(--ink);border-radius:12px;background:#f3eadb;padding:8px;font-weight:800;font-size:14px}
+
 /* Leaderboard */
 .nick{display:flex;flex-direction:column;gap:8px;background:#f1f8fd;border-radius:14px;padding:10px}
 .nickRow{display:flex;gap:8px}
@@ -260,9 +268,9 @@ p{margin:0;line-height:1.45;font-size:16px}
       <div class="tl" id="dTL" hidden>
         <div class="label">Stone Age timeline in Britain</div>
         <div class="tlbar">
-          <span data-era="old">Old Stone Age<small>until about 10,000 BC</small></span>
-          <span data-era="mid">Middle Stone Age<small>10,000 to 4000 BC</small></span>
-          <span data-era="new">New Stone Age<small>4000 to 2500 BC</small></span>
+          <span data-era="old">Palaeolithic<small>early Stone Age, until about 10,000 BC</small></span>
+          <span data-era="mid">Mesolithic<small>middle Stone Age, 10,000 to 4000 BC</small></span>
+          <span data-era="new">Neolithic<small>new Stone Age, 4000 to 2500 BC</small></span>
           <span data-era="bronze">Bronze Age<small>from 2500 BC</small></span>
         </div>
         <p class="muted" id="dTLtxt"></p>
@@ -301,6 +309,19 @@ p{margin:0;line-height:1.45;font-size:16px}
       <div id="bookGrid"></div>
       <div class="fact" id="bookFact" hidden><b id="bookFactName"></b><p id="bookFactTxt"></p></div>
       <button class="btn" id="bookClose">Close</button>
+    </div>
+  </div>
+
+  <!-- Key words before a Stone Age level -->
+  <div class="overlay" id="wordsScr" hidden>
+    <div class="panel">
+      <div class="label">Key words for this level</div>
+      <h2 id="wTitle"></h2>
+      <div class="words" id="wList"></div>
+      <div class="row">
+        <button class="btn alt" id="wRead">🔊 Read to me</button>
+        <button class="btn go" id="wGo">Let's go!</button>
+      </div>
     </div>
   </div>
 
@@ -386,10 +407,10 @@ const ANIMALS = {
   sabretooth:{w:'stone', e:'🐅', f:'sepia(.55) saturate(.7)', n:'Sabre-toothed cat', hurt:'has chipped one of its long fangs.', thanks:'Rrrowr! Thank you! My fangs feel great!', fact:'Sabre-toothed cats had fangs as long as a pencil! They weren\'t really tigers, and they died out long ago, during the Ice Age.'},
   mammoth: {w:'stone', e:'🦣', n:'Woolly mammoth', boss:true, hurt:'is stuck in a frozen bog. This mammoth is hurt the most!', thanks:'Thank you, Doctor! Now I can stomp off to find my herd!', fact:'Woolly mammoths had thick fur and small ears to keep warm. Stone Age people even built huts from mammoth bones and tusks!'},
   otter:   {w:'stone', e:'🦦', n:'Otter', hurt:'has a sore paw from a sharp shell.', thanks:'Thank you! Time for a swim!', fact:'Otters lived in the rivers and lakes of Stone Age Britain, catching fish just like the people did.'},
-  salmon:  {w:'stone', e:'🐟', n:'Atlantic salmon', hurt:'is stranded in a shallow pool.', thanks:'Splash! Thank you! Back up the river I go!', fact:'Middle Stone Age people caught salmon with spears, harpoons and fish traps woven from hazel sticks.'},
+  salmon:  {w:'stone', e:'🐟', n:'Atlantic salmon', hurt:'is stranded in a shallow pool.', thanks:'Splash! Thank you! Back up the river I go!', fact:'People in the middle Stone Age caught salmon with spears, harpoons and fish traps woven from hazel sticks.'},
   sheep:   {w:'stone', e:'🐑', n:'Soay sheep', hurt:'has its wool caught on a thorn bush.', thanks:'Baa! Thank you for setting me free!', fact:'The first farmers brought sheep to Britain by boat. Soay sheep on Scottish islands still look like those early sheep.'},
   beaver:  {w:'stone', e:'🦫', n:'Beaver', hurt:'has a splinter in its paw from building a dam.', thanks:'Thank you! Back to building my dam!', fact:'Beavers lived all over Stone Age Britain. Their dams made ponds full of fish and birds for people to catch.'},
-  aurochs: {w:'stone', e:'🐂', n:'Aurochs', hurt:'has a cracked horn.', thanks:'Mooo! Thank you, kind vet!', fact:'Aurochs were huge wild cattle, as tall as a grown-up at the shoulder. New Stone Age farmers tamed cattle for milk, meat and leather.'},
+  aurochs: {w:'stone', e:'🐂', n:'Aurochs', hurt:'has a cracked horn.', thanks:'Mooo! Thank you, kind vet!', fact:'Aurochs were huge wild cattle, as tall as a grown-up at the shoulder. Farmers in the new Stone Age tamed cattle for milk, meat and leather.'},
   wolf:    {w:'stone', e:'🐺', n:'Grey wolf', hurt:'has a thorn stuck in its paw.', thanks:'Aroooo! Thank you for helping me!', fact:'Dogs were the very first animals that people tamed. They came from wolves, more than 15,000 years ago.'},
   // sky
   bluetit: {w:'sky', e:'🐦', n:'Blue tit', hurt:'flew into a window and feels dizzy.', thanks:'Tweet tweet! Thank you! I feel much better!', fact:'Long ago, blue tits learned to peck open the foil tops on milk bottles to drink the cream!'},
@@ -403,7 +424,7 @@ const LEVELS = [
   // The Stone Age comes first, as it did in history; each world unlocks the next.
   {world:'stone', name:'Palaeolithic Ice Age', era:'old', len:7200, speed:1.04, mix:{rock:4,mud:2,litter:5,med:2,sun:1}, snow:true, snowcaps:true, trees:'pine', sparse:true,
    sky:['#86a9c8','#e4edf3'], far:'#b4c4d4', hill:['#8f9c8a','#6f7c6a'], grass:'#9a9f74', trail:'#8a7a66',
-   pine:['#2c4a3a','#56765d'], leaf:['#3d5a3a','#7a9466'], animals:['reindeer','wildhorse','cavebear','sabretooth','mammoth'], at:[.2, .36, .52, .68, .86], end:'Painted Cave', landmark:'cave',
+   pine:['#2c4a3a','#56765d'], leaf:['#3d5a3a','#7a9466'], words:['Stone Age', 'Prehistoric', 'Palaeolithic'], animals:['reindeer','wildhorse','cavebear','sabretooth','mammoth'], at:[.2, .36, .52, .68, .86], end:'Painted Cave', landmark:'cave',
    finds:[
      {name:'flint hand axe', fact:'Hand axes were chipped from flint into a sharp teardrop shape. People used them to cut meat, wood and animal skins.'},
      {name:'bone needle', fact:'Stone Age people sewed animal skins and furs into warm clothes, using needles made of bone and thread made from animal sinew.'},
@@ -412,24 +433,24 @@ const LEVELS = [
    timeline:[[.1, 'More than 2 million years ago, early humans in Africa made the very first stone tools.'],
      [.44, 'About 300,000 years ago, people just like us, called Homo sapiens, first lived in Africa.'],
      [.77, 'Over 40,000 years ago, people began painting animals on cave walls, using coloured earth and charcoal.']],
-   outro:'Next stop: the Mesolithic, or Middle Stone Age, when the ice melted and thick forests grew.'},
+   outro:'Next stop: the Mesolithic, the middle Stone Age, when the ice melted and thick forests grew.'},
   {world:'stone', name:'Mesolithic Wildwood', era:'mid', len:7600, speed:1.07, mix:{rock:3,mud:3,litter:5,med:2,sun:1}, trees:'mixed',
    sky:['#6aaede','#dcedf7'], far:'#8fa9be', hill:['#5f8e4f','#46703a'], grass:'#5f8c3e', trail:'#8c6d4a',
-   pine:['#27502f','#4f7f48'], leaf:['#2f5f2a','#76a84f'], animals:['beaver','otter','salmon'], end:'Star Carr', landmark:'lake',
+   pine:['#27502f','#4f7f48'], leaf:['#2f5f2a','#76a84f'], words:['Mesolithic', 'Hunter-gatherer'], animals:['beaver','otter','salmon'], end:'Star Carr', landmark:'lake',
    finds:[
-     {name:'antler harpoon', fact:'Middle Stone Age people carved barbed harpoons from deer antler to spear fish in rivers and lakes.'},
+     {name:'antler harpoon', fact:'People in the middle Stone Age carved barbed harpoons from deer antler to spear fish in rivers and lakes.'},
      {name:'microliths', fact:'Microliths were tiny, sharp flint pieces. People slotted them into wooden arrows and knives.'},
      {name:'roasted hazelnuts', fact:'People gathered and roasted huge piles of hazelnuts. Archaeologists still dig up the burnt shells!'},
      {name:'antler headdress', fact:'At Star Carr, people made headdresses from red deer skulls with the antlers still on. Nobody knows for sure what they were for!'}],
    timeline:[[.12, 'About 12,000 years ago the Ice Age ended. The ice melted and thick forests spread across Britain.'],
      [.42, 'About 11,000 years ago, people at Star Carr in Yorkshire built wooden platforms beside a lake and made dugout canoes.'],
      [.72, 'About 8,000 years ago, rising seas covered Doggerland, the land that joined Britain to Europe, and Britain became an island.']],
-   outro:'Next stop: the Neolithic, or New Stone Age, when people started to farm.'},
+   outro:'Next stop: the Neolithic, the new Stone Age, when people started to farm.'},
   {world:'stone', name:'Neolithic Farm', era:'new', len:8000, speed:1.1, mix:{rock:3,mud:3,litter:5,med:2,sun:1}, trees:'leaf',
    sky:['#5aa7de','#d6ecf8'], far:'#93aec4', hill:['#7aa35e','#58833f'], grass:'#6a9a45', trail:'#a0805a',
-   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], animals:['sheep','aurochs','wolf'], end:'Stonehenge', landmark:'stonehenge',
+   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], words:['Neolithic', 'Archaeologist'], animals:['sheep','aurochs','wolf'], end:'Stonehenge', landmark:'stonehenge',
    finds:[
-     {name:'polished stone axe', fact:'New Stone Age farmers used polished stone axes to chop down trees and clear the land for fields.'},
+     {name:'polished stone axe', fact:'Farmers in the new Stone Age used polished stone axes to chop down trees and clear the land for fields.'},
      {name:'clay pot', fact:'Farmers made pots from clay to store and cook food. Some were decorated with patterns pressed in with cord.'},
      {name:'flint arrowhead', fact:'Flint arrowheads were fixed to arrows and shot from a bow to hunt deer and birds.'},
      {name:'quern stone', fact:'A quern was a pair of stones used to grind wheat into flour for bread.'}],
@@ -485,6 +506,17 @@ const SPELL_HARD = [['ocean','🌊',['oshun','ocian']],['turtle','🐢',['turtel
   ['squirrel','🐿️',['squirel','skwirrel']],['spider','🕷️',['spyder','spidor']],['caterpillar','🐛',['catterpillar','caterpiller']],
   ['journey','🧭',['jurney','journy']]];
 
+// Stone Age key words, word for word from the class's glossary.
+const GLOSSARY = {
+  'Archaeologist': 'Someone who explores objects and places from the past.',
+  'Hunter-gatherer': 'People who hunt and gather food to eat.',
+  'Mesolithic': 'The middle Stone Age.',
+  'Neolithic': 'The new Stone Age.',
+  'Palaeolithic': 'The early Stone Age.',
+  'Prehistoric': 'The time in the past before written records.',
+  'Stone Age': 'A long period in early human history. People used stone to make tools.',
+};
+
 // History (stone age) — ages 6–7
 const HIST_EASY = [
   ['What did Stone Age people use to make sharp tools?', 'Flint stone', ['Plastic','Metal']],
@@ -496,12 +528,12 @@ const HIST_EASY = [
   ['Where did some Stone Age people shelter?', 'In caves', ['In flats','In hotels']],
   ['What was a Stone Age sewing needle made from?', 'Bone', ['Steel','Plastic']],
   ['What did Stone Age people eat?', 'Meat, fish, nuts and berries', ['Pizza and chips','Sweets']],
-  ['What did New Stone Age farmers grow?', 'Wheat', ['Bananas','Chocolate']],
+  ['What did new Stone Age farmers grow?', 'Wheat', ['Bananas','Chocolate']],
   ['Which animal did people tame first?', 'The dog', ['The cat','The goldfish']],
   ['What is the famous Stone Age stone circle in England?', 'Stonehenge', ['Big Ben','The Tower of London']],
   ['What came after the Stone Age?', 'The Bronze Age', ['The Space Age','The Dinosaur Age']],
   ['Did Stone Age people live at the same time as dinosaurs?', 'No, dinosaurs died out long before', ['Yes, they rode them','Yes, they kept them as pets']],
-  ['What did New Stone Age people make pots from?', 'Clay', ['Glass','Plastic']],
+  ['What did new Stone Age people make pots from?', 'Clay', ['Glass','Plastic']],
   ['What did Stone Age people use to make paint?', 'Coloured earth and charcoal', ['Paint from a tin','Felt-tip pens']],
   ['What was the weather like in the Ice Age?', 'Very cold', ['Very hot','Warm and sunny']],
   ['What is a woolly mammoth?', 'A hairy relative of the elephant', ['A huge bird','A big fish']],
@@ -509,27 +541,42 @@ const HIST_EASY = [
   ['What did people use to grind wheat into flour?', 'A quern stone', ['A food blender','A toaster']],
   ['What gave Stone Age people light at night?', 'Fire', ['Torches with batteries','Light bulbs']],
   ['How do we know about the Stone Age?', 'From things people left behind', ['From old videos','From photos']],
-  ['What do we call someone who digs up things from long ago?', 'An archaeologist', ['A dentist','A pilot']],
+  ['What do we call someone who explores objects and places from the past?', 'An archaeologist', ['A dentist','A pilot']],
+  // key words
+  ['What is an archaeologist?', 'Someone who explores objects and places from the past', ['Someone who flies planes','Someone who bakes bread']],
+  ['What is a hunter-gatherer?', 'Someone who hunts and gathers food to eat', ['Someone who works in a shop','Someone who drives a bus']],
+  ['What does "prehistoric" mean?', 'The time before written records', ['Yesterday','The future']],
+  ['Why is it called the Stone Age?', 'People used stone to make tools', ['Everyone lived in stone houses','It rained stones']],
+  ['Which word means the early Stone Age?', 'Palaeolithic', ['Neolithic','Mesolithic']],
+  ['Which word means the middle Stone Age?', 'Mesolithic', ['Palaeolithic','Neolithic']],
+  ['Which word means the new Stone Age?', 'Neolithic', ['Palaeolithic','Mesolithic']],
   ['Which Ice Age animal has big antlers?', 'A reindeer', ['A rabbit','A penguin']],
   ['What did hunters do with animal skins?', 'Made clothes and tents', ['Threw them away','Made paper']],
-  ['What animals did New Stone Age farmers keep?', 'Sheep, cows and pigs', ['Lions and tigers','Parrots']],
+  ['What animals did new Stone Age farmers keep?', 'Sheep, cows and pigs', ['Lions and tigers','Parrots']],
   ['How long did the Stone Age last?', 'A very, very long time', ['One week','About a year']],
   ['What did Stone Age people make jewellery from?', 'Shells, teeth and beads', ['Gold coins','Plastic']],
   ['What did Stone Age people use to carry and store food?', 'Baskets, skins and clay pots', ['Plastic bags','Tin cans']],
   ['Why did Stone Age people move around a lot?', 'To follow the animals they hunted', ['To go on holiday','To visit the shops']],
   // fishing
-  ['How did Middle Stone Age people catch fish?', 'With spears, harpoons and traps', ['With fishing rods from a shop','With magnets']],
+  ['How did middle Stone Age people catch fish?', 'With spears, harpoons and traps', ['With fishing rods from a shop','With magnets']],
   ['What was a dugout canoe made from?', 'A hollowed-out tree trunk', ['Plastic','Metal']],
   ['What did Stone Age people make fish traps from?', 'Woven sticks', ['Glass','Bricks']],
   ['What is a harpoon?', 'A spear with hooks for catching fish', ['A kind of boat','A type of fish']],
-  ['Where did Middle Stone Age people like to camp?', 'Near rivers, lakes and the sea', ['On top of mountains','In deserts']],
+  ['Where did middle Stone Age people like to camp?', 'Near rivers, lakes and the sea', ['On top of mountains','In deserts']],
 ];
 
 // History (stone age) — ages 8–10
 const HIST_HARD = [
   ['What are the three parts of the Stone Age called?', 'Palaeolithic, Mesolithic and Neolithic', ['Jurassic, Triassic and Cretaceous','Bronze, Iron and Gold']],
-  ['What does "Neolithic" mean?', 'New Stone Age', ['Old Stone Age','Middle Stone Age']],
-  ['What does "Palaeolithic" mean?', 'Old Stone Age', ['New Stone Age','Iron Age']],
+  ['What does "Neolithic" mean?', 'The new Stone Age', ['The early Stone Age','The middle Stone Age']],
+  ['What does "Palaeolithic" mean?', 'The early Stone Age', ['The new Stone Age','The middle Stone Age']],
+  ['What does "Mesolithic" mean?', 'The middle Stone Age', ['The early Stone Age','The new Stone Age']],
+  ['What does "prehistoric" mean?', 'The time in the past before written records', ['The time of the Romans','The future']],
+  ['Put the Stone Age in order, earliest first:', 'Palaeolithic, Mesolithic, Neolithic', ['Neolithic, Mesolithic, Palaeolithic','Mesolithic, Palaeolithic, Neolithic']],
+  ['How do we know about prehistoric people?', 'Archaeologists explore the objects and places they left', ['They wrote diaries','They took photos']],
+  ['Which word means people who hunt and gather food to eat?', 'Hunter-gatherers', ['Farmers','Archaeologists']],
+  ['What is an archaeologist?', 'Someone who explores objects and places from the past', ['A dinosaur doctor','A star scientist']],
+  ['Which is the best description of the Stone Age?', 'A long period in early human history when people used stone to make tools', ['A short time when people lived in castles','The time of the dinosaurs']],
   ['In which period did people in Britain start farming?', 'The Neolithic', ['The Palaeolithic','The Iron Age']],
   ['Roughly when did farming reach Britain?', 'About 4000 BC', ['About AD 1066','About 100,000 BC']],
   ['Roughly when was work on Stonehenge first started?', 'About 3000 BC', ['About AD 1500','About 50,000 BC']],
@@ -545,7 +592,7 @@ const HIST_HARD = [
   ['What did Neolithic people use to make cloth?', 'Wool and plant fibres like flax', ['Nylon','Polyester']],
   ['Which metal was used after the Stone Age?', 'Bronze', ['Steel','Aluminium']],
   ['Bronze is made by mixing copper with…', 'tin', ['iron','gold']],
-  ['What is a hunter-gatherer?', 'Someone who hunts animals and collects wild food', ['Someone who works in a shop','A farmer']],
+  ['What is a hunter-gatherer?', 'People who hunt and gather food to eat', ['People who work in shops','Farmers']],
   ['What did cave paintings mostly show?', 'Animals like horses, bison and deer', ['Kings and queens','Ships']],
   ['What did Stone Age artists use for red and yellow paint?', 'Ochre, a coloured earth', ['Red plastic','Ketchup']],
   ['Ötzi the Iceman lived about 5,300 years ago. Where was he found?', 'Frozen in ice in the Alps', ['In a pyramid','Under the sea']],
@@ -779,8 +826,27 @@ function loadVoices(){
   sel.value = voices.some(v => v.name === voiceName) ? voiceName : '';
 }
 try { speechSynthesis.onvoiceschanged = loadVoices; } catch (e) {}
+// Facts that pop up while driving (artefacts, timeline milestones) wait their turn, so one never cuts
+// another off. Each one's message stays on screen while it is read, and the queue only plays while driving.
+let narrQ = [], narrNow = null;
+function narrate(text, shown){ narrQ.push({text, shown}); narrNext(); }
+function narrNext(){
+  if (narrNow || !narrQ.length || phase !== 'run') return;
+  const item = narrNow = narrQ.shift(), est = 1200 + item.text.length * 70, play = item.play = {};
+  toast(item.shown, est + 1500);
+  const done = () => {
+    if (narrNow !== item || item.play !== play) return;   // a late callback from an earlier, interrupted play
+    narrNow = null;
+    if (item.cut) { item.cut = false; narrQ.unshift(item); }
+    setTimeout(narrNext, 500);
+  };
+  if (muted) setTimeout(done, est); else say(item.text, done, true);
+  setTimeout(done, est * 1.6 + 2500);   // safety net in case the speech never reports that it finished
+}
+function clearNarration(){ narrQ = []; narrNow = null; }
 // onDone runs when the speech finishes, fails or can't start (also when the sound is off).
-function say(text, onDone){
+function say(text, onDone, fromQueue){
+  if (!fromQueue && narrNow) narrNow.cut = true;   // something more important is talking over a queued fact; replay it later
   if (muted) return onDone && onDone();
   try {
     speechSynthesis.cancel();
@@ -1153,7 +1219,7 @@ function startLevel(i){
   dist = 0; objs = []; lane = 1; jy = laneY[1]; battery = 4; meds = 1; litter = 0; litterOut = 0; helped = 0; helpCalls = 0;
   aIdx = 0; spawnT = laneH * 4; slow = 0; inv = 0; shake = 0; flagOut = false; pooT = 6; fx = []; floats = [];
   rain = (L.rain || L.snow || L.world === 'sea') ? Array.from({length: L.world === 'sea' ? 40 : L.snow ? 120 : 90}, () => ({x: rand(0, W), y: rand(0, H), s: rand(.6, 1.2)})) : [];
-  tlIdx = 0;
+  tlIdx = 0; clearNarration();
   $('#litIco').textContent = L.finds ? '🏺' : '♻️'; $('#litChip').title = L.finds ? 'Artefacts found' : 'Litter picked up';
   const Wd = WORLDS[L.world];
   $('#powIco').textContent = Wd.powIco; $('#powChip').title = Wd.pow;
@@ -1167,8 +1233,9 @@ function startLevel(i){
     hy = H * .42; hvy = 0; started = false; lift = false; liftT = 0; tiltS = 0; colT = W * .5; prevGy = H * .45; nextAnimal = 1500; skyCount = 0; battery = 5; meds = 2;
     $('#bestN').textContent = best ? ` · best ${best} m` : '';
     toast('Tap to fly! Dodge the mountains and storm clouds.');
-  } else toast(`${L.name}: help ${L.animals.length} animals!`);
+  } else if (!L.words) toast(`${L.name}: help ${L.animals.length} animals!`);   // Stone Age levels show it after the key words
   phase = 'run'; updateHud();
+  if (L.words) showWords();
   const hb = $('#hud').getBoundingClientRect().bottom - $('#app').getBoundingClientRect().top;
   $('#prog').style.top = (hb + 22) + 'px'; $('#toast').style.top = (hb + (L.endless ? 12 : 44)) + 'px';
 }
@@ -1211,7 +1278,7 @@ function update(dt){
   }
   const jx = JX();
   if (L.timeline && tlIdx < L.timeline.length && dist >= L.len * L.timeline[tlIdx][0]) {   // Stone Age timeline milestones
-    const m = L.timeline[tlIdx++][1]; toast('⏳ ' + m, 7000); say(m);
+    const m = L.timeline[tlIdx++][1]; narrate(m, '⏳ ' + m);
   }
   if (aIdx < L.animals.length && dist + (W - jx) >= L.len * (L.at || AT)[aIdx]) {
     objs.push({t: 'animal', k: L.animals[aIdx], x: W + 60, y: trailTop - laneH * .3}); aIdx++;
@@ -1260,7 +1327,7 @@ function hit(o){
     case 'litter': {
       if (L.finds) {   // Stone Age: dig up an artefact and learn about it the first time
         const f = L.finds[o.v % 4]; litter++; sfx('ding'); float('+1 ' + f.name, '#8a5a1c'); burst(o.x, o.y, '#e0c27a', 12);
-        if (!tips['find' + f.name]) { tips['find' + f.name] = 1; toast(`🏺 ${f.fact}`, 7000); say(f.fact); }
+        if (!tips['find' + f.name]) { tips['find' + f.name] = 1; narrate(f.fact, `🏺 ${f.fact}`); }
         break;
       }
       litter++; sfx('ding'); float('+1 ' + LITTER_NAME[L.world][o.v % 4], '#2b7a3d'); burst(o.x, o.y, '#5cc46a', 10);
@@ -2763,7 +2830,7 @@ addEventListener('keydown', e => {
 });
 
 // ---------------- UI ----------------
-const screens = ['titleScr', 'rescueScr', 'doneScr', 'bookScr', 'pauseScr', 'flightScr', 'boardScr'];
+const screens = ['titleScr', 'rescueScr', 'doneScr', 'bookScr', 'pauseScr', 'flightScr', 'boardScr', 'wordsScr'];
 function showOnly(id){ screens.forEach(s => $('#' + s).hidden = s !== id); }
 let toastTimer;
 function toast(msg, ms = 3000){ const el = $('#toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), ms); }
@@ -2902,7 +2969,7 @@ function ask(){
         setTimeout(unlock, 450 + est * 1.6 + 2000);   // safety net in case the speech never reports that it finished
         const k = resc.k;
         rb.onclick = () => {
-          showOnly(null); phase = 'run'; inv = 1.2;
+          showOnly(null); phase = 'run'; inv = 1.2; narrNext();
           if (isSky()) { skyCount++; hvy = 0; objs.push({t: 'thanks', k, x: JX() + skyS() * 1.4, y: objs.find(o => o.t === 'peak' && Math.abs(o.x - JX() - skyS() * 1.4) < skyS() * 3)?.top - skyS() * .45 || hy, life: 2.6}); }
           else objs.push({t: 'thanks', k, x: JX() + laneH * 1.1, y: trailTop - laneH * .3, life: 2.6});
         };
@@ -2957,6 +3024,7 @@ $('#fAgain').onclick = () => startLevel(LEVELS.length - 1);
 $('#fMenu').onclick = toTitle;
 
 function toTitle(){
+  clearNarration();
   if (isSky() && phase !== 'title' && phase !== 'flightover') { const m = Math.floor(dist / 10); if (m > best) { best = m; persist(); syncScores(); } }
   phase = 'title'; objs = []; rain = []; L = LEVELS[0]; buildSprites();
   ['hud', 'prog', 'ctrl'].forEach(id => $('#' + id).hidden = true);
@@ -2964,9 +3032,20 @@ function toTitle(){
   renderWorlds(); showOnly('titleScr');
 }
 function pause(){ phase = 'paused'; showOnly('pauseScr'); }
+const wordsSpeech = () => 'Key words. ' + L.words.map(w => `${w}. ${GLOSSARY[w]}`).join(' ');
+function showWords(){
+  phase = 'intro';
+  $('#wTitle').textContent = L.name;
+  $('#wList').innerHTML = L.words.map(w => `<div class="word"><b></b><span></span></div>`).join('');
+  [...$('#wList').children].forEach((el, i) => { el.querySelector('b').textContent = L.words[i]; el.querySelector('span').textContent = GLOSSARY[L.words[i]]; });
+  showOnly('wordsScr');
+  setTimeout(() => { if (phase === 'intro') say(wordsSpeech()); }, 400);
+}
+$('#wRead').onclick = () => say(wordsSpeech());
+$('#wGo').onclick = () => { try { speechSynthesis.cancel(); } catch (e) {} sfx('tap'); showOnly(null); phase = 'run'; toast(`${L.name}: help ${L.animals.length} animals!`); };
 let pausedFrom = 'run';
 $('#pauseBtn').onclick = () => { if (phase === 'run') pause(); };
-$('#pResume').onclick = () => { showOnly(null); phase = 'run'; };
+$('#pResume').onclick = () => { showOnly(null); phase = 'run'; narrNext(); };
 $('#pQuit').onclick = toTitle;
 $('#dMenu').onclick = toTitle;
 
@@ -3021,14 +3100,19 @@ renderWorlds();
 function renderBook(){
   const keys = Object.keys(ANIMALS);
   $('#bookCount').textContent = `${keys.filter(k => saved.has(k)).length} of ${keys.length} animals helped`;
-  $('#bookGrid').innerHTML = ['stone', 'land', 'sea', 'sky'].map(wk =>
+  $('#bookGrid').innerHTML = `<div class="bookHead">📘 Stone Age key words</div><div class="gloss">` +
+    Object.keys(GLOSSARY).map(w => `<button data-w="${w}">${w}</button>`).join('') + '</div>' +
+    ['stone', 'land', 'sea', 'sky'].map(wk =>
     `<div class="bookHead">${WORLDS[wk].icon} ${WORLDS[wk].title}</div><div class="book">` +
     keys.filter(k => ANIMALS[k].w === wk).map(k => {
       const a = ANIMALS[k], got = saved.has(k);
       return `<div class="card ${got ? '' : 'locked'}"><button data-k="${k}" ${got ? '' : 'disabled'} aria-label="${got ? a.n : 'Not found yet'}"><span class="e" style="${a.f && got ? 'filter:' + a.f : ''}">${a.e}</span></button><small>${got ? a.n : '???'}</small></div>`;
     }).join('') + '</div>').join('');
   $('#bookFact').hidden = true;
-  document.querySelectorAll('#bookGrid button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#bookGrid .gloss button').forEach(b => b.onclick = () => {
+    const w = b.dataset.w; $('#bookFactName').textContent = w; $('#bookFactTxt').textContent = GLOSSARY[w]; $('#bookFact').hidden = false; say(`${w}. ${GLOSSARY[w]}`);
+  });
+  document.querySelectorAll('#bookGrid .book button').forEach(b => b.onclick = () => {
     const a = ANIMALS[b.dataset.k]; $('#bookFactName').textContent = a.n; $('#bookFactTxt').textContent = a.thanks + ' ' + a.fact; $('#bookFact').hidden = false;
   });
 }
