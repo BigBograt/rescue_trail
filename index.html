@@ -75,6 +75,27 @@ p{margin:0;line-height:1.45;font-size:16px}
 .seg button[aria-pressed="true"]{background:#a9dcf7}
 .label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left}
 
+/* Title screen: one column on phones; on wider screens the worlds sit in two columns with a side panel of settings */
+.tmain,.tside{display:flex;flex-direction:column;gap:12px}
+.sideBtns{display:flex;flex-wrap:wrap;gap:10px}
+.sideBtns > *{flex:1 1 120px}
+@media (min-width:760px){
+  .titlePanel{max-width:1040px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px;align-items:start;padding:16px 18px}
+  .titlePanel h1{font-size:clamp(40px,5vw,54px)}
+  .titlePanel .worlds{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+  .tside{border-left:2.5px dashed #d8d4de;padding-left:18px;text-align:left}
+  .sideBtns{flex-direction:column}
+  .sideBtns > *{flex:none}
+  .tside .voiceRow{flex-direction:column;align-items:stretch}
+  .tside .voiceRow select{flex:none}
+}
+@media (min-width:760px) and (max-height:700px){
+  .titlePanel{gap:12px;padding:12px 16px}
+  .titlePanel h1{font-size:40px}
+  .titlePanel .tmain > p{font-size:14px}
+  .lvls button{padding:6px}
+}
+
 /* World picker */
 .worlds{display:flex;flex-direction:column;gap:10px}
 .world{border:2.5px solid var(--ink);border-radius:16px;padding:10px;text-align:left;display:flex;flex-direction:column;gap:8px}
@@ -210,26 +231,30 @@ p{margin:0;line-height:1.45;font-size:16px}
 
   <!-- Title -->
   <div class="overlay clear" id="titleScr">
-    <div class="panel">
-      <h1 id="logo">Billy's Vet Rescue Trail<small>From the Stone Age to the sky</small></h1>
-      <p>Help hurt animals, tidy up litter and keep our planet healthy. Finish each world to unlock the next one.</p>
-      <div class="label">Question level</div>
-      <div class="seg" id="modeSeg">
-        <button data-mode="easy" aria-pressed="true">Ages 6–7</button>
-        <button data-mode="hard" aria-pressed="false">Ages 8–10</button>
+    <div class="panel titlePanel">
+      <div class="tmain">
+        <h1 id="logo">Billy's Vet Rescue Trail<small>From the Stone Age to the sky</small></h1>
+        <p>Help hurt animals, tidy up litter and keep our planet healthy. Finish each world to unlock the next one.</p>
+        <div class="worlds" id="worlds"></div>
       </div>
-      <div class="worlds" id="worlds"></div>
-      <div class="row">
-        <button class="btn alt" id="bookBtn">Rescue Book</button>
-        <button class="btn alt" id="boardBtn">Leaderboard</button>
-        <button class="btn alt" id="muteBtn">Sound: on</button>
+      <div class="tside">
+        <div class="label">Question level</div>
+        <div class="seg" id="modeSeg">
+          <button data-mode="easy" aria-pressed="true">Ages 6–7</button>
+          <button data-mode="hard" aria-pressed="false">Ages 8–10</button>
+        </div>
+        <div class="sideBtns">
+          <button class="btn alt" id="bookBtn">📖 Rescue Book</button>
+          <button class="btn alt" id="boardBtn">🏆 Leaderboard</button>
+          <button class="btn alt" id="muteBtn">Sound: on</button>
+        </div>
+        <div class="voiceRow">
+          <label class="label" for="voiceSel">Voice</label>
+          <select id="voiceSel"></select>
+          <button class="speak" id="voiceTest">🔊 Test</button>
+        </div>
+        <p class="muted">Game idea and drawings by our chief game designer, age 7.</p>
       </div>
-      <div class="voiceRow">
-        <label class="label" for="voiceSel">Voice</label>
-        <select id="voiceSel"></select>
-        <button class="speak" id="voiceTest">🔊 Test</button>
-      </div>
-      <p class="muted">Game idea and drawings by our chief game designer, age 7.</p>
     </div>
   </div>
 
