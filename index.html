@@ -202,7 +202,7 @@ p{margin:0;line-height:1.45;font-size:16px}
   <!-- Title -->
   <div class="overlay clear" id="titleScr">
     <div class="panel">
-      <h1 id="logo">Vet Rescue Trail<small>On land, under the sea and up in the sky</small></h1>
+      <h1 id="logo">Vet Rescue Trail<small>From the Stone Age to the sky</small></h1>
       <p>Help hurt animals, tidy up litter and keep our planet healthy. Finish each world to unlock the next one.</p>
       <div class="label">Question level</div>
       <div class="seg" id="modeSeg">
@@ -394,19 +394,7 @@ const ANIMALS = {
 };
 
 const LEVELS = [
-  {world:'land', name:'Forest Trail', len:6500, speed:1.0, mix:{rock:3,mud:2,litter:5,med:2,sun:1}, rain:false, trees:'mixed',
-   sky:['#5aa7de','#cfe8f7'], far:'#8fb0c9', hill:['#6f9f58','#4f8040'], grass:'#5c9442', trail:'#a97d52',
-   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], animals:['deer','pig','hedgehog'], end:'⛺'},
-  {world:'land', name:'Muddy Hills', len:7500, speed:1.08, mix:{rock:3,mud:5,litter:4,med:2,sun:1}, rain:true, trees:'leaf',
-   sky:['#7d8fa3','#cbd5de'], far:'#93a2b0', hill:['#62875a','#456b40'], grass:'#4f843c', trail:'#7f5b3b',
-   pine:['#2a5131','#4c7a45'], leaf:['#34602c','#6f9a4f'], animals:['boar','fox','badger'], end:'⛺'},
-  {world:'land', name:'Mount Evans', len:8500, speed:1.15, mix:{rock:5,mud:2,litter:4,med:2,sun:2}, rain:false, trees:'pine', mountain:true,
-   sky:['#4a9ddb','#dcefff'], far:'#9db7d1', hill:['#7c9c6a','#5a7b4b'], grass:'#6a9450', trail:'#9c8670',
-   pine:['#24502f','#4f8650'], leaf:['#3d6e2d','#86b45a'], animals:['goat','hare','bear'], end:'Mount Evans'},
-  {world:'sea', name:'Coral Reef', len:7000, speed:1.0, mix:{barrel:2,jelly:3,net:2,litter:6,med:2,air:2},
-   water:['#43bad9','#0c5c84'], sand:'#e2cc98', animals:['crab','reeffish','octopus'], end:'🐚'},
-  {world:'sea', name:'Voyage to Hawaii', len:8500, speed:1.1, mix:{barrel:3,jelly:4,net:3,litter:5,med:2,air:2},
-   water:['#2a93c4','#06304f'], sand:'#cdb27c', animals:['seal','dolphin','turtle'], end:'Hawaii'},
+  // The Stone Age comes first, as it did in history; each world unlocks the next.
   {world:'stone', name:'Ice Age Tundra', era:'old', len:7200, speed:1.04, mix:{rock:4,mud:2,litter:5,med:2,sun:1}, snow:true, snowcaps:true, trees:'pine', sparse:true,
    sky:['#86a9c8','#e4edf3'], far:'#b4c4d4', hill:['#8f9c8a','#6f7c6a'], grass:'#9a9f74', trail:'#8a7a66',
    pine:['#2c4a3a','#56765d'], leaf:['#3d5a3a','#7a9466'], animals:['reindeer','wildhorse','mammoth'], end:'Painted Cave', landmark:'cave',
@@ -430,6 +418,19 @@ const LEVELS = [
      [.42, 'About 6,000 years ago, in 4000 BC, farming reached Britain. People grew wheat and kept sheep, cows and pigs.'],
      [.72, 'Stonehenge was built in stages, starting about 5,000 years ago, around 3000 BC.']],
    outro:'About 2500 BC, people in Britain learned to make bronze from copper and tin, and the Stone Age came to an end.'},
+  {world:'land', name:'Forest Trail', len:6500, speed:1.0, mix:{rock:3,mud:2,litter:5,med:2,sun:1}, rain:false, trees:'mixed',
+   sky:['#5aa7de','#cfe8f7'], far:'#8fb0c9', hill:['#6f9f58','#4f8040'], grass:'#5c9442', trail:'#a97d52',
+   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], animals:['deer','pig','hedgehog'], end:'⛺'},
+  {world:'land', name:'Muddy Hills', len:7500, speed:1.08, mix:{rock:3,mud:5,litter:4,med:2,sun:1}, rain:true, trees:'leaf',
+   sky:['#7d8fa3','#cbd5de'], far:'#93a2b0', hill:['#62875a','#456b40'], grass:'#4f843c', trail:'#7f5b3b',
+   pine:['#2a5131','#4c7a45'], leaf:['#34602c','#6f9a4f'], animals:['boar','fox','badger'], end:'⛺'},
+  {world:'land', name:'Mount Evans', len:8500, speed:1.15, mix:{rock:5,mud:2,litter:4,med:2,sun:2}, rain:false, trees:'pine', mountain:true,
+   sky:['#4a9ddb','#dcefff'], far:'#9db7d1', hill:['#7c9c6a','#5a7b4b'], grass:'#6a9450', trail:'#9c8670',
+   pine:['#24502f','#4f8650'], leaf:['#3d6e2d','#86b45a'], animals:['goat','hare','bear'], end:'Mount Evans'},
+  {world:'sea', name:'Coral Reef', len:7000, speed:1.0, mix:{barrel:2,jelly:3,net:2,litter:6,med:2,air:2},
+   water:['#43bad9','#0c5c84'], sand:'#e2cc98', animals:['crab','reeffish','octopus'], end:'🐚'},
+  {world:'sea', name:'Voyage to Hawaii', len:8500, speed:1.1, mix:{barrel:3,jelly:4,net:3,litter:5,med:2,air:2},
+   water:['#2a93c4','#06304f'], sand:'#cdb27c', animals:['seal','dolphin','turtle'], end:'Hawaii'},
   {world:'sky', name:'Sky Rescue', endless:true, speed:.95, mix:{litter:5,med:2,sun:2,blimp:1},
    sky:['#4fa3e0','#dceffc'], far:'#9fb9d3', animals:['bluetit','sparrow','magpie','eagle']},
 ];
@@ -681,8 +682,20 @@ if (!nick) try {
   if (m) nick = JSON.parse(decodeURIComponent(m[1]));
 } catch (e) {}
 if (nick) saveNickCookie();
-// Two Stone Age levels were added before Sky Rescue (which used to be level 5 and is now 7). Keep it unlocked for existing players.
-try { if (!localStorage.getItem('vrt-v2')) { if (unlocked >= 5) unlocked = 7; localStorage.setItem('vrt-v2', '1'); persist(); } } catch (e) {}
+// The level list has been reordered twice, and `unlocked` is the highest level index a player can open.
+// Older saves are carried over by level name, so nobody loses a level they had already reached.
+//   v1: Land x3, Sea x2, Sky   v2: Land x3, Sea x2, Stone x2, Sky   v3 (now): Stone x2, Land x3, Sea x2, Sky
+try {
+  if (!localStorage.getItem('vrt-v3')) {
+    if (localStorage.getItem('vrt-unlocked') !== null) {
+      let u = unlocked;
+      if (!localStorage.getItem('vrt-v2') && u >= 5) u = 7;
+      const V2 = ['Forest Trail', 'Muddy Hills', 'Mount Evans', 'Coral Reef', 'Voyage to Hawaii', 'Ice Age Tundra', 'Stone Age Farm', 'Sky Rescue'];
+      unlocked = Math.max(0, LEVELS.findIndex(l => l.name === V2[Math.max(0, Math.min(7, u))]));
+    }
+    localStorage.setItem('vrt-v2', '1'); localStorage.setItem('vrt-v3', '1'); persist();
+  }
+} catch (e) {}
 function persist(){ try {
   localStorage.setItem('vrt-book', JSON.stringify([...saved])); localStorage.setItem('vrt-mode', mode);
   localStorage.setItem('vrt-unlocked', unlocked); localStorage.setItem('vrt-best', best);
@@ -2207,6 +2220,92 @@ function lightBar(x, y, w, hh, t, h){
   ctx.globalCompositeOperation = 'source-over';
 }
 
+// Stone Age log car, side view facing right: log rollers, a log frame, plank bench, wooden wheel and a hide canopy.
+// Same footprint as the jeep, so the rollers touch the ground at +0.46h.
+function drawStoneCar(x, y, t){
+  const s = laneH, w = s * 1.55, h = s * .7, moving = phase === 'run';
+  const P = (px, py) => [px * w, py * h];
+  ctx.save();
+  ctx.translate(x + (shake > 0 ? rand(-4, 4) : 0), y - h * .1 + (moving ? Math.abs(Math.sin(t * 9)) * -2 : 0));
+  if (inv > 0 && moving && Math.floor(t * 12) % 2) ctx.globalAlpha = .55;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  softShadow(0, h * .46, w * .62, h * .12, .45);
+  const rot = (moving || phase === 'title') ? dist / (h * .34) : 0;
+  const bark = (x0, y0, x1, y1, th) => {        // a log between two points, lit from above, with bark streaks and knots
+    const len = Math.hypot(x1 - x0, y1 - y0), a = Math.atan2(y1 - y0, x1 - x0);
+    ctx.save(); ctx.translate(x0, y0); ctx.rotate(a);
+    const g = ctx.createLinearGradient(0, -th / 2, 0, th / 2); g.addColorStop(0, '#c9a06c'); g.addColorStop(.45, '#94693f'); g.addColorStop(1, '#5a3c22');
+    rr(ctx, 0, -th / 2, len, th, th * .45); ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = 'rgba(60,38,20,.45)'; ctx.lineWidth = 1;
+    for (let k = 0; k < len / 9; k++) { const sx = hash(k * 3.1 + len) * len, sy = (hash(k * 1.7 + len) - .5) * th * .7; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + th * (.6 + hash(k) * .8), sy + (hash(k + 9) - .5) * 2); ctx.stroke(); }
+    ctx.fillStyle = '#4e321c'; const kx = len * (.3 + hash(len) * .4); ctx.beginPath(); ctx.ellipse(kx, 0, th * .14, th * .1, 0, 0, 7); ctx.fill();
+    // pale end grain on the near end
+    ctx.fillStyle = '#d9bb8c'; ctx.beginPath(); ctx.ellipse(len - th * .1, 0, th * .14, th * .45, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(120,80,45,.6)'; ctx.beginPath(); ctx.ellipse(len - th * .1, 0, th * .07, th * .25, 0, 0, 7); ctx.stroke();
+    ctx.restore();
+  };
+  const roller = (cx, cy, r) => {               // log seen end-on: bark rim, growth rings and cracks that turn as it rolls
+    ctx.save(); ctx.translate(cx, cy);
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fillStyle = '#4f3420'; ctx.fill();
+    ctx.rotate(rot);
+    ctx.fillStyle = '#3b2616'; for (let k = 0; k < 22; k++) { ctx.rotate(Math.PI * 2 / 22); ctx.beginPath(); ctx.arc(r * (.95 + hash(k) * .04), 0, r * (.03 + hash(k * 3) * .04), 0, 7); ctx.fill(); }   // rough bark
+    const g = ctx.createRadialGradient(-r * .2, -r * .2, 0, 0, 0, r * .86); g.addColorStop(0, '#e6c999'); g.addColorStop(.7, '#c29a68'); g.addColorStop(1, '#8e6a42');
+    ctx.beginPath(); ctx.arc(0, 0, r * .84, 0, 7); ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = 'rgba(120,82,45,.55)'; ctx.lineWidth = 1.1;
+    for (let k = 1; k <= 5; k++) { ctx.beginPath(); ctx.arc(r * .03, r * .02, r * .15 * k, 0, 7); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(70,44,22,.7)'; ctx.lineWidth = 1.6;
+    for (const a of [.4, 2.3, 4.4]) { ctx.beginPath(); ctx.moveTo(Math.cos(a) * r * .15, Math.sin(a) * r * .15); ctx.lineTo(Math.cos(a + .1) * r * .78, Math.sin(a + .1) * r * .78); ctx.stroke(); }
+    ctx.restore();
+    ctx.fillStyle = '#3a2614'; ctx.beginPath(); ctx.arc(cx, cy, r * .16, 0, 7); ctx.fill();          // axle peg
+    ctx.fillStyle = '#7a5532'; ctx.beginPath(); ctx.arc(cx - r * .04, cy - r * .04, r * .09, 0, 7); ctx.fill();
+  };
+  // canopy poles and roof log (behind the seat)
+  bark(...P(-.33, -.1), ...P(-.3, -1.12), h * .07);
+  bark(...P(.2, -.1), ...P(.17, -1.08), h * .07);
+  // rollers, then the frame logs running through their axles
+  roller(...P(-.3, .13), h * .33);
+  roller(...P(.32, .1), h * .36);
+  bark(...P(-.62, .08), ...P(.64, .06), h * .17);
+  bark(...P(-.5, -.1), ...P(.42, -.13), h * .1);                                // floor rail
+  ctx.fillStyle = '#8a6036';                                                     // lashings where logs cross
+  for (const px of [-.33, .2]) { ctx.save(); ctx.translate(...P(px, -.1)); ctx.rotate(.6); ctx.fillRect(-h * .06, -h * .015, h * .12, h * .03); ctx.rotate(-1.2); ctx.fillRect(-h * .06, -h * .015, h * .12, h * .03); ctx.restore(); }
+  // bench seat and back
+  const plank = (x0, y0, ww, hh, rotA) => {
+    ctx.save(); ctx.translate(x0, y0); ctx.rotate(rotA || 0);
+    const g = ctx.createLinearGradient(0, 0, 0, hh); g.addColorStop(0, '#c79d68'); g.addColorStop(1, '#7c5530');
+    rr(ctx, 0, 0, ww, hh, Math.min(ww, hh) * .3); ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = 'rgba(70,45,22,.4)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(ww * .1, hh * .5); ctx.lineTo(ww * .9, hh * .45); ctx.stroke();
+    ctx.restore();
+  };
+  plank(...P(-.31, -.66), w * .06, h * .44, -.08);                              // back posts
+  plank(...P(-.08, -.64), w * .05, h * .4, -.08);
+  plank(...P(-.33, -.6), w * .3, h * .09, -.03);                                // back planks
+  plank(...P(-.33, -.46), w * .3, h * .09, -.03);
+  // driver silhouette
+  ctx.fillStyle = '#121a22';
+  ctx.beginPath(); ctx.arc(...P(-.06, -.6), h * .1, 0, 7); ctx.fill();
+  rr(ctx, ...P(-.14, -.5), w * .13, h * .26, h * .06); ctx.fill();
+  ctx.strokeStyle = '#121a22'; ctx.lineWidth = h * .06; ctx.beginPath(); ctx.moveTo(...P(-.02, -.4)); ctx.lineTo(...P(.06, -.42)); ctx.stroke();
+  plank(...P(-.34, -.28), w * .4, h * .1);                                      // seat
+  // steering post and wooden wheel (a ring seen from the side)
+  bark(...P(.17, -.12), ...P(.08, -.44), h * .05);
+  ctx.strokeStyle = '#6e4a2a'; ctx.lineWidth = h * .045; ctx.beginPath(); ctx.ellipse(...P(.075, -.47), w * .018, h * .13, -.25, 0, 7); ctx.stroke();
+  ctx.strokeStyle = '#b48a58'; ctx.lineWidth = h * .015; ctx.beginPath(); ctx.ellipse(...P(.07, -.48), w * .012, h * .11, -.25, 0, 7); ctx.stroke();
+  // front footboard curving up over the roller
+  ctx.strokeStyle = '#8a6036'; ctx.lineWidth = h * .07; ctx.beginPath(); ctx.moveTo(...P(.12, -.14)); ctx.quadraticCurveTo(...P(.4, -.16), ...P(.5, -.32)); ctx.stroke();
+  // hide canopy with a ragged edge and a red ochre cross
+  bark(...P(-.42, -1.13), ...P(.32, -1.09), h * .07);
+  const sway = Math.sin(t * 3) * .015;
+  ctx.beginPath(); ctx.moveTo(...P(-.4, -1.1)); ctx.lineTo(...P(.3, -1.07));
+  for (let k = 0; k <= 10; k++) { const q = k / 10; ctx.lineTo(...P(.3 - q * .7 + (k % 2 ? .012 : 0), -.9 + (k % 2 ? .05 : 0) + Math.sin(k * 2.3) * .02 + sway * (k % 3))); }
+  ctx.closePath();
+  const hg = ctx.createLinearGradient(0, -h * 1.1, 0, -h * .85); hg.addColorStop(0, '#e2c79a'); hg.addColorStop(1, '#b8935e');
+  ctx.fillStyle = hg; ctx.fill(); ctx.strokeStyle = 'rgba(90,60,30,.45)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = 'rgba(165,45,25,.85)'; const [cx2, cy2] = P(-.05, -1.0);
+  ctx.fillRect(cx2 - h * .025, cy2 - h * .065, h * .05, h * .13); ctx.fillRect(cx2 - h * .065, cy2 - h * .025, h * .13, h * .05);
+  if (moving && Math.random() < .5) fx.push({x: x - w * .5, y: y + h * .35, vx: rand(-80, -30), vy: rand(-40, -10), life: rand(.3, .6), c: 'rgba(190,160,120,.5)', r: rand(3, 7), g: 400});
+  ctx.restore();
+}
 // Research submersible (Triton-style) with an acrylic dome, side view facing right.
 function drawSub(x, y, t){
   const s = laneH, w = s * 1.75, h = s * .62;
@@ -2422,7 +2521,7 @@ function draw(t){
     const jx = phase === 'title' ? W * .5 : JX();
     if (phase === 'title') jy = laneY[1];
     list.filter(o => o.y <= jy + 2).forEach(o => drawObj(o, t));
-    if (L.world === 'sea') drawSub(jx, jy, t); else drawJeep(jx, jy, t);
+    if (L.world === 'sea') drawSub(jx, jy, t); else if (L.world === 'stone') drawStoneCar(jx, jy, t); else drawJeep(jx, jy, t);
     list.filter(o => o.y > jy + 2).forEach(o => drawObj(o, t));
     drawStrip(SP.fg, dist * 1.35, H - SP.fg.height * .62);   // out-of-focus plants right in front of the camera
   }
@@ -2696,11 +2795,11 @@ function poo(){
 // ----- title / world picker -----
 function renderWorlds(){
   const wrap = $('#worlds'); wrap.innerHTML = '';
-  for (const wk of ['land', 'sea', 'stone', 'sky']) {
+  for (const wk of ['stone', 'land', 'sea', 'sky']) {
     const Wd = WORLDS[wk], idxs = LEVELS.map((l, i) => l.world === wk ? i : -1).filter(i => i >= 0);
     const open = unlocked >= idxs[0];
     const div = document.createElement('div'); div.className = `world ${wk}${open ? '' : ' locked'}`;
-    const prevWorld = {sea:'all 3 land trails', stone:'both sea levels', sky:'both Stone Age levels'}[wk];
+    const prevWorld = {land:'both Stone Age levels', sea:'all 3 land trails', sky:'both sea levels'}[wk];
     div.innerHTML = `<div class="whead"><b>${Wd.icon} ${Wd.title}</b><span>${Wd.subject} questions</span></div>` +
       (open ? '' : `<span class="muted">🔒 Finish ${prevWorld} to unlock</span>`);
     const lv = document.createElement('div'); lv.className = 'lvls';
@@ -2734,7 +2833,7 @@ renderWorlds();
 function renderBook(){
   const keys = Object.keys(ANIMALS);
   $('#bookCount').textContent = `${keys.filter(k => saved.has(k)).length} of ${keys.length} animals helped`;
-  $('#bookGrid').innerHTML = ['land', 'sea', 'stone', 'sky'].map(wk =>
+  $('#bookGrid').innerHTML = ['stone', 'land', 'sea', 'sky'].map(wk =>
     `<div class="bookHead">${WORLDS[wk].icon} ${WORLDS[wk].title}</div><div class="book">` +
     keys.filter(k => ANIMALS[k].w === wk).map(k => {
       const a = ANIMALS[k], got = saved.has(k);
