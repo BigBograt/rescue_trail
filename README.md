@@ -1,4 +1,4 @@
-# Vet Rescue Trail
+# Billy's Vet Rescue Trail
 
 A browser game for kids: help hurt animals, pick up litter and keep the planet healthy across three worlds — Land (maths), Under the Sea (spelling) and Sky Rescue (science). Two question levels: ages 6–7 and 8–10.
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vet Rescue Trail</title>
+<title>Billy's Vet Rescue Trail</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@600;800&display=swap">
@@ -202,7 +202,7 @@ p{margin:0;line-height:1.45;font-size:16px}
   <!-- Title -->
   <div class="overlay clear" id="titleScr">
     <div class="panel">
-      <h1 id="logo">Vet Rescue Trail<small>From the Stone Age to the sky</small></h1>
+      <h1 id="logo">Billy's Vet Rescue Trail<small>From the Stone Age to the sky</small></h1>
       <p>Help hurt animals, tidy up litter and keep our planet healthy. Finish each world to unlock the next one.</p>
       <div class="label">Question level</div>
       <div class="seg" id="modeSeg">
@@ -381,7 +381,12 @@ const ANIMALS = {
   // stone age
   reindeer:{w:'stone', e:'🦌', n:'Reindeer', hurt:'has a sore hoof from the icy ground.', thanks:'Thank you! Now I can keep up with my herd!', fact:'Ice Age hunters followed herds of reindeer. They used the meat for food, the skins for clothes and tents, and the antlers for tools.'},
   wildhorse:{w:'stone', e:'🐎', n:'Wild horse', hurt:'has cut its leg on sharp rocks.', thanks:'Neigh! Thank you! I can gallop again!', fact:'Stone Age artists painted wild horses on cave walls. Some of these paintings are more than 30,000 years old!'},
+  cavebear:{w:'stone', e:'🐻', f:'brightness(.72) saturate(.8)', n:'Cave bear', hurt:'has hurt its paw on an icy rock.', thanks:'Grrr-thank you! Back to my cave for a snooze!', fact:'Cave bears were bigger than today\'s brown bears and ate mostly plants. They slept through the winter in caves, where their bones are still found.'},
+  sabretooth:{w:'stone', e:'🐅', f:'sepia(.55) saturate(.7)', n:'Sabre-toothed cat', hurt:'has chipped one of its long fangs.', thanks:'Rrrowr! Thank you! My fangs feel great!', fact:'Sabre-toothed cats had fangs as long as a pencil! They weren\'t really tigers, and they died out long ago, during the Ice Age.'},
   mammoth: {w:'stone', e:'🦣', n:'Woolly mammoth', boss:true, hurt:'is stuck in a frozen bog. This mammoth is hurt the most!', thanks:'Thank you, Doctor! Now I can stomp off to find my herd!', fact:'Woolly mammoths had thick fur and small ears to keep warm. Stone Age people even built huts from mammoth bones and tusks!'},
+  otter:   {w:'stone', e:'🦦', n:'Otter', hurt:'has a sore paw from a sharp shell.', thanks:'Thank you! Time for a swim!', fact:'Otters lived in the rivers and lakes of Stone Age Britain, catching fish just like the people did.'},
+  salmon:  {w:'stone', e:'🐟', n:'Atlantic salmon', hurt:'is stranded in a shallow pool.', thanks:'Splash! Thank you! Back up the river I go!', fact:'Middle Stone Age people caught salmon with spears, harpoons and fish traps woven from hazel sticks.'},
+  sheep:   {w:'stone', e:'🐑', n:'Soay sheep', hurt:'has its wool caught on a thorn bush.', thanks:'Baa! Thank you for setting me free!', fact:'The first farmers brought sheep to Britain by boat. Soay sheep on Scottish islands still look like those early sheep.'},
   beaver:  {w:'stone', e:'🦫', n:'Beaver', hurt:'has a splinter in its paw from building a dam.', thanks:'Thank you! Back to building my dam!', fact:'Beavers lived all over Stone Age Britain. Their dams made ponds full of fish and birds for people to catch.'},
   aurochs: {w:'stone', e:'🐂', n:'Aurochs', hurt:'has a cracked horn.', thanks:'Mooo! Thank you, kind vet!', fact:'Aurochs were huge wild cattle, as tall as a grown-up at the shoulder. New Stone Age farmers tamed cattle for milk, meat and leather.'},
   wolf:    {w:'stone', e:'🐺', n:'Grey wolf', hurt:'has a thorn stuck in its paw.', thanks:'Aroooo! Thank you for helping me!', fact:'Dogs were the very first animals that people tamed. They came from wolves, more than 15,000 years ago.'},
@@ -395,27 +400,40 @@ const ANIMALS = {
 
 const LEVELS = [
   // The Stone Age comes first, as it did in history; each world unlocks the next.
-  {world:'stone', name:'Ice Age Tundra', era:'old', len:7200, speed:1.04, mix:{rock:4,mud:2,litter:5,med:2,sun:1}, snow:true, snowcaps:true, trees:'pine', sparse:true,
+  {world:'stone', name:'Palaeolithic Ice Age', era:'old', len:7200, speed:1.04, mix:{rock:4,mud:2,litter:5,med:2,sun:1}, snow:true, snowcaps:true, trees:'pine', sparse:true,
    sky:['#86a9c8','#e4edf3'], far:'#b4c4d4', hill:['#8f9c8a','#6f7c6a'], grass:'#9a9f74', trail:'#8a7a66',
-   pine:['#2c4a3a','#56765d'], leaf:['#3d5a3a','#7a9466'], animals:['reindeer','wildhorse','mammoth'], end:'Painted Cave', landmark:'cave',
+   pine:['#2c4a3a','#56765d'], leaf:['#3d5a3a','#7a9466'], animals:['reindeer','wildhorse','cavebear','sabretooth','mammoth'], at:[.2, .36, .52, .68, .86], end:'Painted Cave', landmark:'cave',
    finds:[
      {name:'flint hand axe', fact:'Hand axes were chipped from flint into a sharp teardrop shape. People used them to cut meat, wood and animal skins.'},
      {name:'bone needle', fact:'Stone Age people sewed animal skins and furs into warm clothes, using needles made of bone and thread made from animal sinew.'},
      {name:'spear point', fact:'Hunters tied sharp flint points onto wooden spears to hunt reindeer, horses and even mammoths.'},
      {name:'shell necklace', fact:'Even in the Stone Age people loved jewellery! They made necklaces from shells, animal teeth and beads.'}],
-   timeline:[[.12, 'More than 2 million years ago, early humans in Africa made the very first stone tools.'],
-     [.42, 'About 300,000 years ago, people just like us, called Homo sapiens, first lived in Africa.'],
-     [.72, 'Over 40,000 years ago, people began painting animals on cave walls, using coloured earth and charcoal.']]},
-  {world:'stone', name:'Stone Age Farm', era:'new', len:8000, speed:1.1, mix:{rock:3,mud:3,litter:5,med:2,sun:1}, trees:'leaf',
+   timeline:[[.1, 'More than 2 million years ago, early humans in Africa made the very first stone tools.'],
+     [.44, 'About 300,000 years ago, people just like us, called Homo sapiens, first lived in Africa.'],
+     [.77, 'Over 40,000 years ago, people began painting animals on cave walls, using coloured earth and charcoal.']],
+   outro:'Next stop: the Mesolithic, or Middle Stone Age, when the ice melted and thick forests grew.'},
+  {world:'stone', name:'Mesolithic Wildwood', era:'mid', len:7600, speed:1.07, mix:{rock:3,mud:3,litter:5,med:2,sun:1}, trees:'mixed',
+   sky:['#6aaede','#dcedf7'], far:'#8fa9be', hill:['#5f8e4f','#46703a'], grass:'#5f8c3e', trail:'#8c6d4a',
+   pine:['#27502f','#4f7f48'], leaf:['#2f5f2a','#76a84f'], animals:['beaver','otter','salmon'], end:'Star Carr', landmark:'lake',
+   finds:[
+     {name:'antler harpoon', fact:'Middle Stone Age people carved barbed harpoons from deer antler to spear fish in rivers and lakes.'},
+     {name:'microliths', fact:'Microliths were tiny, sharp flint pieces. People slotted them into wooden arrows and knives.'},
+     {name:'roasted hazelnuts', fact:'People gathered and roasted huge piles of hazelnuts. Archaeologists still dig up the burnt shells!'},
+     {name:'antler headdress', fact:'At Star Carr, people made headdresses from red deer skulls with the antlers still on. Nobody knows for sure what they were for!'}],
+   timeline:[[.12, 'About 12,000 years ago the Ice Age ended. The ice melted and thick forests spread across Britain.'],
+     [.42, 'About 11,000 years ago, people at Star Carr in Yorkshire built wooden platforms beside a lake and made dugout canoes.'],
+     [.72, 'About 8,000 years ago, rising seas covered Doggerland, the land that joined Britain to Europe, and Britain became an island.']],
+   outro:'Next stop: the Neolithic, or New Stone Age, when people started to farm.'},
+  {world:'stone', name:'Neolithic Farm', era:'new', len:8000, speed:1.1, mix:{rock:3,mud:3,litter:5,med:2,sun:1}, trees:'leaf',
    sky:['#5aa7de','#d6ecf8'], far:'#93aec4', hill:['#7aa35e','#58833f'], grass:'#6a9a45', trail:'#a0805a',
-   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], animals:['beaver','aurochs','wolf'], end:'Stonehenge', landmark:'stonehenge',
+   pine:['#2f5e34','#5b8f4c'], leaf:['#3d6e2d','#86b45a'], animals:['sheep','aurochs','wolf'], end:'Stonehenge', landmark:'stonehenge',
    finds:[
      {name:'polished stone axe', fact:'New Stone Age farmers used polished stone axes to chop down trees and clear the land for fields.'},
      {name:'clay pot', fact:'Farmers made pots from clay to store and cook food. Some were decorated with patterns pressed in with cord.'},
      {name:'flint arrowhead', fact:'Flint arrowheads were fixed to arrows and shot from a bow to hunt deer and birds.'},
      {name:'quern stone', fact:'A quern was a pair of stones used to grind wheat into flour for bread.'}],
-   timeline:[[.12, 'About 12,000 years ago the Ice Age ended. The ice melted and forests grew across Britain.'],
-     [.42, 'About 6,000 years ago, in 4000 BC, farming reached Britain. People grew wheat and kept sheep, cows and pigs.'],
+   timeline:[[.12, 'About 6,000 years ago, in 4000 BC, farming reached Britain. People grew wheat and kept sheep, cows and pigs.'],
+     [.42, 'About 5,000 years ago, people built Skara Brae, a village of stone houses in Orkney, Scotland.'],
      [.72, 'Stonehenge was built in stages, starting about 5,000 years ago, around 3000 BC.']],
    outro:'About 2500 BC, people in Britain learned to make bronze from copper and tin, and the Stone Age came to an end.'},
   {world:'land', name:'Forest Trail', len:6500, speed:1.0, mix:{rock:3,mud:2,litter:5,med:2,sun:1}, rain:false, trees:'mixed',
@@ -498,6 +516,12 @@ const HIST_EASY = [
   ['What did Stone Age people make jewellery from?', 'Shells, teeth and beads', ['Gold coins','Plastic']],
   ['What did Stone Age people use to carry and store food?', 'Baskets, skins and clay pots', ['Plastic bags','Tin cans']],
   ['Why did Stone Age people move around a lot?', 'To follow the animals they hunted', ['To go on holiday','To visit the shops']],
+  // fishing
+  ['How did Middle Stone Age people catch fish?', 'With spears, harpoons and traps', ['With fishing rods from a shop','With magnets']],
+  ['What was a dugout canoe made from?', 'A hollowed-out tree trunk', ['Plastic','Metal']],
+  ['What did Stone Age people make fish traps from?', 'Woven sticks', ['Glass','Bricks']],
+  ['What is a harpoon?', 'A spear with hooks for catching fish', ['A kind of boat','A type of fish']],
+  ['Where did Middle Stone Age people like to camp?', 'Near rivers, lakes and the sea', ['On top of mountains','In deserts']],
 ];
 
 // History (stone age) — ages 8–10
@@ -534,6 +558,12 @@ const HIST_HARD = [
   ['How long did the Stone Age last?', 'More than 2 million years', ['About 100 years','About 1,000 years']],
   ['What does "BC" mean in a date like 3000 BC?', 'Before Christ: years counted back before year 1', ['Big Castle','British Century']],
   ['Which tool did Neolithic farmers use to clear forests?', 'A polished stone axe', ['A chainsaw','A bronze sword']],
+  // fishing
+  ['What were Mesolithic harpoons usually made from?', 'Deer antler or bone', ['Bronze','Iron']],
+  ['Why did many Mesolithic people live by lakes and the coast?', 'There were plenty of fish, birds and shellfish', ['To go swimming','To be near the shops']],
+  ['Huge heaps of old shells left by Stone Age people are called…', 'shell middens', ['shell castles','sandcastles']],
+  ['What kind of boat did Mesolithic people use?', 'A dugout canoe carved from a tree trunk', ['A steamship','A sailing ship']],
+  ['A woven basket left in a river to catch fish is called a…', 'fish trap', ['fish fork','fish house']],
 ];
 
 // Science (sky) — ages 6–7
@@ -682,18 +712,22 @@ if (!nick) try {
   if (m) nick = JSON.parse(decodeURIComponent(m[1]));
 } catch (e) {}
 if (nick) saveNickCookie();
-// The level list has been reordered twice, and `unlocked` is the highest level index a player can open.
+// The level list has changed a few times, and `unlocked` is the highest level index a player can open.
 // Older saves are carried over by level name, so nobody loses a level they had already reached.
-//   v1: Land x3, Sea x2, Sky   v2: Land x3, Sea x2, Stone x2, Sky   v3 (now): Stone x2, Land x3, Sea x2, Sky
 try {
-  if (!localStorage.getItem('vrt-v3')) {
+  if (!localStorage.getItem('vrt-v4')) {
     if (localStorage.getItem('vrt-unlocked') !== null) {
-      let u = unlocked;
-      if (!localStorage.getItem('vrt-v2') && u >= 5) u = 7;
-      const V2 = ['Forest Trail', 'Muddy Hills', 'Mount Evans', 'Coral Reef', 'Voyage to Hawaii', 'Ice Age Tundra', 'Stone Age Farm', 'Sky Rescue'];
-      unlocked = Math.max(0, LEVELS.findIndex(l => l.name === V2[Math.max(0, Math.min(7, u))]));
+      const ORDERS = {
+        v1: ['Forest Trail', 'Muddy Hills', 'Mount Evans', 'Coral Reef', 'Voyage to Hawaii', 'Sky Rescue'],
+        v2: ['Forest Trail', 'Muddy Hills', 'Mount Evans', 'Coral Reef', 'Voyage to Hawaii', 'Ice Age Tundra', 'Stone Age Farm', 'Sky Rescue'],
+        v3: ['Ice Age Tundra', 'Stone Age Farm', 'Forest Trail', 'Muddy Hills', 'Mount Evans', 'Coral Reef', 'Voyage to Hawaii', 'Sky Rescue']};
+      const RENAMED = {'Ice Age Tundra': 'Palaeolithic Ice Age', 'Stone Age Farm': 'Neolithic Farm'};
+      const old = ORDERS[localStorage.getItem('vrt-v3') ? 'v3' : localStorage.getItem('vrt-v2') ? 'v2' : 'v1'];
+      const name = old[Math.max(0, Math.min(old.length - 1, unlocked))];
+      unlocked = Math.max(0, LEVELS.findIndex(l => l.name === (RENAMED[name] || name)));
     }
-    localStorage.setItem('vrt-v2', '1'); localStorage.setItem('vrt-v3', '1'); persist();
+    for (const v of ['vrt-v2', 'vrt-v3', 'vrt-v4']) localStorage.setItem(v, '1');
+    persist();
   }
 } catch (e) {}
 function persist(){ try {
@@ -1176,7 +1210,7 @@ function update(dt){
   if (L.timeline && tlIdx < L.timeline.length && dist >= L.len * L.timeline[tlIdx][0]) {   // Stone Age timeline milestones
     const m = L.timeline[tlIdx++][1]; toast('⏳ ' + m, 7000); say(m);
   }
-  if (aIdx < L.animals.length && dist + (W - jx) >= L.len * AT[aIdx]) {
+  if (aIdx < L.animals.length && dist + (W - jx) >= L.len * (L.at || AT)[aIdx]) {
     objs.push({t: 'animal', k: L.animals[aIdx], x: W + 60, y: trailTop - laneH * .3}); aIdx++;
   }
   if (!flagOut && dist + (W - jx) >= L.len) { objs.push({t: 'flag', x: W + 40}); flagOut = true; }
@@ -1356,8 +1390,8 @@ function drawLand(t){
   const mfog = ctx.createLinearGradient(0, horizon - laneH * .3, 0, horizon + laneH * .2);
   mfog.addColorStop(0, 'rgba(0,0,0,.18)'); mfog.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = mfog; ctx.fillRect(0, horizon - laneH * .3, W, laneH * .5);
-  if (L.world === 'stone') { drawStoneProps(t, horizon + laneH * .05); drawLandmark(t, horizon + laneH * .12); }
-  drawTreeRow(SP.frontTrees, dist * .65, laneH * 1.05, trailTop - laneH * .06, L.world === 'stone' ? .72 : .42, 23);   // fewer trees so the props and landmark show
+  if (L.world === 'stone') { drawHerds(t, horizon - laneH * .08); drawStoneProps(t, horizon + laneH * .05); drawLandmark(t, horizon + laneH * .12); }
+  drawTreeRow(SP.frontTrees, dist * .65, laneH * 1.05, trailTop - laneH * .06, L.world !== 'stone' ? .42 : L.era === 'mid' ? .55 : .72, 23);   // fewer trees so the props and landmark show
   drawTrail();
 }
 // Soft beams of sunlight slanting down from the sun through the haze.
@@ -1452,13 +1486,16 @@ function drawTrail(){
 // ======================= STONE AGE =======================
 // Scenery props on the grass behind the trail, spaced like a tree row and scrolling at the same speed.
 function drawStoneProps(t, base){
-  const sp = laneH * 1.5, off = dist * .55, first = Math.floor(off / sp) - 1, s = laneH * .5, ice = L.era === 'old';
+  const sp = laneH * 1.5, off = dist * .55, first = Math.floor(off / sp) - 1, s = laneH * .5;
   for (let i = first; i < first + W / sp + 3; i++) {
     const x = i * sp - off + (hash(i + 5) - .5) * sp * .4, k = hash(i * 1.37 + 2);
-    if (ice) {
-      if (k < .28) { for (let m = 0; m < 2 + (hash(i) * 2 | 0); m++) drawMammoth(x + m * s * .9, base - m * 2, s * (.75 + hash(i + m) * .3), hash(i + m * 3) < .5); }
-      else if (k < .5) drawHideTent(x, base, s, t, i);
-      else if (k < .66) drawSnowBoulder(x, base, s, i);
+    if (L.era === 'old') {
+      if (k < .3) drawHideTent(x, base, s, t, i);
+      else if (k < .5) drawSnowBoulder(x, base, s, i);
+    } else if (L.era === 'mid') {
+      if (k < .3) drawLakeside(x, base, s, t, i);
+      else if (k < .48) drawReedHut(x, base, s, t, i);
+      else if (k < .6) drawDryingRack(x, base, s, t, i);
     } else {
       if (k < .26) drawRoundhouse(x, base, s, t, i);
       else if (k < .4) drawStandingStones(x, base, s, i);
@@ -1467,12 +1504,31 @@ function drawStoneProps(t, base){
     }
   }
 }
-function drawMammoth(x, y, s, flip){
-  ctx.save(); ctx.translate(x, y); if (flip) ctx.scale(-1, 1);
+// Animals that walk across the far meadow on their own, independent of the scrolling scenery.
+function drawHerds(t, base){
+  if (L.era === 'new') return;
+  const sp = laneH * 3.4, walk = t * laneH * .22, off = dist * .42 - walk, first = Math.floor(off / sp) - 1;
+  ctx.save(); ctx.globalAlpha = .9;
+  for (let i = first; i < first + W / sp + 3; i++) {
+    if (hash(i * 2.3 + 1) > .6) continue;
+    const x0 = i * sp - off, n = 2 + (hash(i) * 3 | 0);
+    for (let m = 0; m < n; m++) {
+      const ph = t * 4 + i * 1.7 + m * 2.1, x = x0 - m * laneH * .45 + hash(i + m) * laneH * .2, y = base - (m % 2) * laneH * .05;
+      if (L.era === 'old') drawMammoth(x, y, laneH * (.36 + hash(i * 3 + m) * .1), false, ph);
+      else drawDeer(x, y, laneH * (.3 + hash(i * 3 + m) * .06), ph, m === 0);
+    }
+  }
+  ctx.restore();
+}
+function drawMammoth(x, y, s, flip, ph = 0){
+  ctx.save(); ctx.translate(x, y - Math.abs(Math.sin(ph)) * s * .02); if (flip) ctx.scale(-1, 1);
   softShadow(-s * .1, 0, s * .5, s * .07, .3);
   const fur = ctx.createLinearGradient(0, -s * .9, 0, 0); fur.addColorStop(0, '#7a5434'); fur.addColorStop(1, '#3f2a19');
   ctx.fillStyle = fur;
-  for (const lx of [-.32, -.15, .12, .28]) ctx.fillRect(lx * s, -s * .32, s * .13, s * .32);           // legs
+  [-.32, -.15, .12, .28].forEach((lx, k) => {                                                              // legs swing as it walks
+    ctx.save(); ctx.translate((lx + .065) * s, -s * .32); ctx.rotate(Math.sin(ph + (k % 2 ? Math.PI : 0) + (k > 1 ? Math.PI / 2 : 0)) * .28);
+    ctx.fillRect(-s * .065, 0, s * .13, s * .33); ctx.restore();
+  });
   ctx.beginPath(); ctx.ellipse(-s * .05, -s * .45, s * .45, s * .3, 0, 0, 7); ctx.fill();                  // body
   ctx.beginPath(); ctx.arc(s * .34, -s * .62, s * .2, 0, 7); ctx.fill();                                     // domed head
   ctx.beginPath(); ctx.moveTo(-s * .25, -s * .72); ctx.quadraticCurveTo(s * .1, -s * .9, s * .3, -s * .78); ctx.lineTo(s * .2, -s * .5); ctx.fill(); // shoulder hump
@@ -1483,6 +1539,90 @@ function drawMammoth(x, y, s, flip){
   ctx.strokeStyle = 'rgba(160,120,80,.45)'; ctx.lineWidth = 1.2;                                                     // shaggy fur
   for (let k = 0; k < 9; k++) { const fx2 = -s * .42 + k * s * .1; ctx.beginPath(); ctx.moveTo(fx2, -s * .3); ctx.lineTo(fx2 - s * .02, -s * .18); ctx.stroke(); }
   ctx.restore();
+}
+function drawDeer(x, y, s, ph, stag){
+  ctx.save(); ctx.translate(x, y - Math.abs(Math.sin(ph)) * s * .03);
+  softShadow(0, 0, s * .4, s * .06, .25);
+  ctx.strokeStyle = '#5a3420'; ctx.lineWidth = s * .05; ctx.lineCap = 'round';
+  [-.25, -.15, .15, .25].forEach((lx, k) => { const a = Math.sin(ph + (k % 2 ? Math.PI : 0)) * .35; ctx.beginPath(); ctx.moveTo(lx * s, -s * .42); ctx.lineTo(lx * s + Math.sin(a) * s * .42, -s * .42 + Math.cos(a) * s * .42); ctx.stroke(); });
+  const g = ctx.createLinearGradient(0, -s * .7, 0, -s * .35); g.addColorStop(0, '#a0603a'); g.addColorStop(1, '#6a3c22');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, -s * .52, s * .34, s * .14, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(s * .22, -s * .6); ctx.lineTo(s * .36, -s * .9); ctx.lineTo(s * .44, -s * .86); ctx.lineTo(s * .32, -s * .5); ctx.fill();   // neck
+  ctx.beginPath(); ctx.ellipse(s * .44, -s * .9, s * .1, s * .06, .3, 0, 7); ctx.fill();                                               // head
+  ctx.fillStyle = '#e8dcc8'; ctx.beginPath(); ctx.ellipse(-s * .33, -s * .5, s * .05, s * .06, 0, 0, 7); ctx.fill();                     // pale rump
+  if (stag) {
+    ctx.strokeStyle = '#6b5440'; ctx.lineWidth = s * .025;
+    ctx.beginPath(); ctx.moveTo(s * .4, -s * .95); ctx.quadraticCurveTo(s * .3, -s * 1.2, s * .4, -s * 1.35);
+    ctx.moveTo(s * .34, -s * 1.12); ctx.lineTo(s * .24, -s * 1.2); ctx.moveTo(s * .37, -s * 1.25); ctx.lineTo(s * .5, -s * 1.3); ctx.moveTo(s * .36, -s * 1.03); ctx.lineTo(s * .48, -s * 1.08); ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawLakeside(x, y, s, t, i){
+  // a still pool reflecting the sky, edged with reeds, with a dugout canoe pulled up on the bank
+  const lw = s * 1.6, lh = s * .22;
+  const g = ctx.createLinearGradient(0, y - lh, 0, y + lh); g.addColorStop(0, '#9cc6dc'); g.addColorStop(1, '#4f86a6');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x, y - lh * .2, lw, lh, 0, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.45)'; ctx.lineWidth = 1;
+  for (let k = 0; k < 4; k++) { const wx = x - lw * .6 + k * lw * .4 + Math.sin(t + k) * 4; ctx.beginPath(); ctx.moveTo(wx, y - lh * .3 + k % 2 * 3); ctx.lineTo(wx + lw * .18, y - lh * .3 + k % 2 * 3); ctx.stroke(); }
+  // fish leap out of the water now and then
+  const q = (t * .45 + hash(i * 5)) % 1;
+  if (q < .22) {
+    const k = q / .22, jx = x + lw * (.1 + hash(i) * .3) + k * lw * .3, jy = y - lh * .4 - Math.sin(k * Math.PI) * s * .5;
+    ctx.save(); ctx.translate(jx, jy); ctx.rotate(-Math.cos(k * Math.PI) * .9);
+    ctx.fillStyle = '#b8c4cc'; ctx.beginPath(); ctx.ellipse(0, 0, s * .1, s * .035, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-s * .09, 0); ctx.lineTo(-s * .15, -s * .04); ctx.lineTo(-s * .15, s * .04); ctx.fill();
+    ctx.restore();
+  }
+  // woven fish trap set in the shallows
+  const tx = x - lw * .75, ty = y - lh * .4;
+  ctx.fillStyle = '#8a6a3c'; ctx.beginPath(); ctx.moveTo(tx - s * .18, ty - s * .1); ctx.lineTo(tx + s * .14, ty - s * .03); ctx.lineTo(tx + s * .14, ty + s * .03); ctx.lineTo(tx - s * .18, ty + s * .1); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,40,20,.55)'; ctx.lineWidth = 1;
+  for (let k = 0; k < 5; k++) { const wx2 = tx - s * .16 + k * s * .07; ctx.beginPath(); ctx.moveTo(wx2, ty - s * .09 + k * s * .014); ctx.lineTo(wx2, ty + s * .09 - k * s * .014); ctx.stroke(); }
+  ctx.beginPath(); ctx.moveTo(tx - s * .18, ty); ctx.lineTo(tx + s * .14, ty); ctx.stroke();
+  ctx.fillStyle = 'rgba(79,134,166,.55)'; ctx.fillRect(tx - s * .2, ty + s * .01, s * .36, s * .1);   // lower half under the water
+  // dugout canoe: a hollowed log
+  const cg = ctx.createLinearGradient(0, y - lh * .9, 0, y - lh * .1); cg.addColorStop(0, '#9a6e42'); cg.addColorStop(1, '#5a3c22');
+  ctx.fillStyle = cg; ctx.beginPath(); ctx.moveTo(x - lw * .55, y - lh * .8); ctx.quadraticCurveTo(x, y + lh * .2, x + lw * .45, y - lh * .85); ctx.lineTo(x + lw * .4, y - lh * 1.05); ctx.lineTo(x - lw * .5, y - lh * 1.0); ctx.fill();
+  ctx.fillStyle = '#3a2614'; ctx.beginPath(); ctx.ellipse(x - lw * .05, y - lh * 1.0, lw * .4, lh * .12, 0, 0, 7); ctx.fill();
+  if (hash(i * 7) < .6) {        // a fisher standing in the canoe, jabbing a harpoon into the water
+    const jab = Math.max(0, Math.sin(t * 2.2 + i)) * s * .12, fx3 = x - lw * .1, fy = y - lh * 1.05;
+    ctx.fillStyle = '#1b222a'; ctx.beginPath(); ctx.arc(fx3, fy - s * .52, s * .07, 0, 7); ctx.fill();
+    rr(ctx, fx3 - s * .07, fy - s * .45, s * .14, s * .3, s * .05); ctx.fill();
+    ctx.strokeStyle = '#1b222a'; ctx.lineWidth = s * .04; ctx.beginPath(); ctx.moveTo(fx3 - s * .04, fy - s * .15); ctx.lineTo(fx3 - s * .06, fy); ctx.moveTo(fx3 + s * .04, fy - s * .15); ctx.lineTo(fx3 + s * .06, fy); ctx.stroke();
+    ctx.strokeStyle = '#7a5a36'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx3 + s * .02, fy - s * .4); ctx.lineTo(fx3 + s * .3, fy - s * .05 + jab); ctx.stroke();
+    ctx.strokeStyle = '#e8dcc0'; ctx.beginPath(); ctx.moveTo(fx3 + s * .3, fy - s * .05 + jab); ctx.lineTo(fx3 + s * .36, fy + jab * 1.1); ctx.stroke();
+  } else { ctx.strokeStyle = '#7a5a36'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x + lw * .1, y - lh * 1.1); ctx.lineTo(x + lw * .3, y - s * .7); ctx.stroke(); }   // paddle
+  ctx.lineWidth = 1.6;
+  for (let k = 0; k < 18; k++) {                // reeds and bulrushes along the far edge
+    const rx = x - lw + k * lw / 9 + hash(i + k) * 6, rh = s * (.35 + hash(i * 3 + k) * .3), sw = Math.sin(t * 1.3 + k) * 3;
+    ctx.strokeStyle = k % 3 ? '#5c7a3a' : '#7d9a48'; ctx.beginPath(); ctx.moveTo(rx, y - lh * .6); ctx.quadraticCurveTo(rx + sw * .5, y - lh * .6 - rh * .5, rx + sw, y - lh * .6 - rh); ctx.stroke();
+    if (k % 4 === 0) { ctx.fillStyle = '#5a3a22'; ctx.beginPath(); ctx.ellipse(rx + sw, y - lh * .6 - rh, 2, 5, 0, 0, 7); ctx.fill(); }
+  }
+}
+function drawReedHut(x, y, s, t, i){
+  // a round hut of bent poles covered with reeds and hides, like the one found at Howick
+  softShadow(x - s * .1, y, s * .6, s * .08, .3);
+  const g = ctx.createLinearGradient(x - s * .55, 0, x + s * .55, 0); g.addColorStop(0, '#6e5a34'); g.addColorStop(1, '#b49a60');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - s * .55, y); ctx.quadraticCurveTo(x - s * .5, y - s * .85, x, y - s * .9); ctx.quadraticCurveTo(x + s * .5, y - s * .85, x + s * .55, y); ctx.fill();
+  ctx.strokeStyle = 'rgba(70,55,30,.4)'; ctx.lineWidth = 1;
+  for (let k = 1; k < 5; k++) { const yy = y - k * s * .18; ctx.beginPath(); ctx.ellipse(x, y, s * .55 * Math.sqrt(1 - (k / 5.1) ** 2), k * s * .18, 0, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke(); }
+  ctx.fillStyle = '#8a6a45'; ctx.beginPath(); ctx.ellipse(x + s * .2, y - s * .45, s * .16, s * .2, .3, 0, 7); ctx.fill();   // hide patch
+  ctx.fillStyle = '#2a1d12'; ctx.beginPath(); ctx.moveTo(x - s * .12, y); ctx.quadraticCurveTo(x - s * .12, y - s * .32, x, y - s * .33); ctx.quadraticCurveTo(x + s * .12, y - s * .32, x + s * .12, y); ctx.fill();
+  smoke(x, y - s * .9, s * .5, t, i);
+}
+function drawDryingRack(x, y, s, t, i){
+  // fish drying on a wooden rack beside a fire
+  ctx.strokeStyle = '#5a3c22'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - s * .4, y); ctx.lineTo(x - s * .32, y - s * .6); ctx.moveTo(x + s * .4, y); ctx.lineTo(x + s * .32, y - s * .6); ctx.moveTo(x - s * .38, y - s * .55); ctx.lineTo(x + s * .38, y - s * .55); ctx.stroke();
+  for (let k = 0; k < 4; k++) {
+    const fx2 = x - s * .26 + k * s * .17, sw = Math.sin(t * 1.5 + k) * .08;
+    ctx.save(); ctx.translate(fx2, y - s * .55); ctx.rotate(sw);
+    const g = ctx.createLinearGradient(-s * .04, 0, s * .04, 0); g.addColorStop(0, '#8a7a6a'); g.addColorStop(1, '#c8b8a0');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, s * .15, s * .045, s * .14, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, s * .27); ctx.lineTo(-s * .05, s * .34); ctx.lineTo(s * .05, s * .34); ctx.fill();
+    ctx.restore();
+  }
+  campfire(x + s * .7, y, s * .32, t, i);
 }
 function drawHideTent(x, y, s, t, i){
   softShadow(x - s * .1, y, s * .5, s * .08, .3);
@@ -1560,6 +1700,22 @@ function drawSheepPen(x, y, s, t, i){
 // The level's destination grows on the horizon as you get closer, like Mount Evans.
 function drawLandmark(t, base){
   const p = Math.min(1, dist / L.len), mx = W * 1.15 - p * W * .5, sc = laneH * (.7 + p * .5);
+  if (L.landmark === 'lake') {
+    // Star Carr: a lake with a timber platform on posts, huts and a canoe
+    const lw = sc * 2.4, lh = sc * .3;
+    const g = ctx.createLinearGradient(0, base - lh, 0, base + lh); g.addColorStop(0, '#a7cde0'); g.addColorStop(1, '#4c82a2');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(mx, base - lh * .3, lw, lh, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#5a3c22'; ctx.lineWidth = 3;
+    for (let k = 0; k < 7; k++) { const px = mx - lw * .7 + k * lw * .16; ctx.beginPath(); ctx.moveTo(px, base - lh * .7); ctx.lineTo(px, base); ctx.stroke(); }
+    const pg = ctx.createLinearGradient(0, base - lh * .95, 0, base - lh * .7); pg.addColorStop(0, '#b48a58'); pg.addColorStop(1, '#6e4c2e');
+    ctx.fillStyle = pg; ctx.fillRect(mx - lw * .75, base - lh * .95, lw * 1.05, lh * .25);
+    ctx.strokeStyle = 'rgba(60,40,20,.5)'; ctx.lineWidth = 1; for (let k = 0; k < 14; k++) { const px = mx - lw * .75 + k * lw * .075; ctx.beginPath(); ctx.moveTo(px, base - lh * .95); ctx.lineTo(px, base - lh * .7); ctx.stroke(); }
+    drawReedHut(mx - lw * .45, base - lh * .95, sc * .6, t, 7);
+    drawReedHut(mx + lw * .02, base - lh * .95, sc * .5, t, 9);
+    drawLakeside(mx + lw * .55, base + lh * .3, sc * .55, t, 11);
+    landmarkLabel('Star Carr', mx - lw * .2, base - sc * .95);
+    return;
+  }
   if (L.landmark === 'stonehenge') {
     const ring = [[-1.3, .95], [-.85, 1], [-.35, 1.05], [.2, 1], [.7, .95], [1.15, .9]];
     softShadow(mx - sc * .2, base, sc * 1.6, sc * .12, .3);
@@ -1644,6 +1800,29 @@ function drawFind(o, s, t){
     ctx.rotate(.3); ctx.fillStyle = flint('#a39684', '#4f463b');
     ctx.beginPath(); ctx.moveTo(0, -s * .2); ctx.lineTo(s * .12, s * .1); ctx.lineTo(s * .04, s * .06); ctx.lineTo(s * .03, s * .16); ctx.lineTo(-s * .03, s * .16); ctx.lineTo(-s * .04, s * .06); ctx.lineTo(-s * .12, s * .1); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = 'rgba(30,25,20,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, -s * .16); ctx.lineTo(0, s * .12); ctx.stroke();
+  } else if (f === 'antler harpoon') {
+    ctx.rotate(-.5); const g = ctx.createLinearGradient(0, -s * .03, 0, s * .03); g.addColorStop(0, '#efe2c4'); g.addColorStop(1, '#a8916a');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-s * .24, -s * .02); ctx.lineTo(s * .2, -s * .02); ctx.lineTo(s * .27, 0); ctx.lineTo(s * .2, s * .02); ctx.lineTo(-s * .24, s * .02); ctx.fill();
+    for (let k = 0; k < 4; k++) { const bx = s * (.15 - k * .09); ctx.beginPath(); ctx.moveTo(bx, -s * .02); ctx.lineTo(bx - s * .06, -s * .07); ctx.lineTo(bx - s * .035, -s * .02); ctx.fill(); }
+  } else if (f === 'microliths') {
+    ctx.rotate(-.3); ctx.strokeStyle = '#7a5a36'; ctx.lineWidth = s * .03; ctx.beginPath(); ctx.moveTo(-s * .25, 0); ctx.lineTo(s * .2, 0); ctx.stroke();
+    for (let k = 0; k < 4; k++) { const bx = s * (.18 - k * .07); ctx.fillStyle = k % 2 ? '#8f8270' : '#a99c88'; ctx.beginPath(); ctx.moveTo(bx, -s * .015); ctx.lineTo(bx - s * .055, -s * .015); ctx.lineTo(bx - s * .03, -s * .07); ctx.fill(); }
+    ctx.fillStyle = '#9a8c78'; ctx.beginPath(); ctx.moveTo(s * .2, -s * .03); ctx.lineTo(s * .27, 0); ctx.lineTo(s * .2, s * .03); ctx.fill();
+  } else if (f === 'roasted hazelnuts') {
+    for (const [nx, ny, br] of [[-.08, .04, 0], [.06, .05, 1], [0, -.05, 0], [.12, -.03, 1], [-.13, -.04, 1]]) {
+      const g = ctx.createRadialGradient(nx * s - s * .015, ny * s - s * .02, 1, nx * s, ny * s, s * .06); g.addColorStop(0, br ? '#5a3a22' : '#a87444'); g.addColorStop(1, br ? '#2a1a0e' : '#6a4426');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(nx * s, ny * s, s * .055, s * .065, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = 'rgba(230,210,170,.6)'; ctx.beginPath(); ctx.ellipse(nx * s, ny * s + s * .045, s * .035, s * .015, 0, 0, 7); ctx.fill();
+    }
+  } else if (f === 'antler headdress') {
+    ctx.fillStyle = '#e8dcc0'; ctx.beginPath(); ctx.ellipse(0, s * .05, s * .07, s * .1, 0, 0, 7); ctx.fill();   // skull cap
+    ctx.fillStyle = '#5a4a38'; ctx.beginPath(); ctx.arc(-s * .025, s * .07, s * .015, 0, 7); ctx.arc(s * .025, s * .07, s * .015, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#9a7e5a'; ctx.lineWidth = s * .025; ctx.lineCap = 'round';
+    for (const d of [-1, 1]) {
+      ctx.beginPath(); ctx.moveTo(d * s * .04, -s * .02); ctx.quadraticCurveTo(d * s * .16, -s * .1, d * s * .14, -s * .25);
+      ctx.moveTo(d * s * .1, -s * .07); ctx.lineTo(d * s * .2, -s * .12); ctx.moveTo(d * s * .14, -s * .17); ctx.lineTo(d * s * .24, -s * .2); ctx.stroke();
+    }
+    ctx.strokeStyle = '#6b4f33'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-s * .07, s * .1); ctx.quadraticCurveTo(0, s * .2, s * .07, s * .1); ctx.stroke();   // tie
   } else {   // quern stone: a saddle-shaped base with a rubbing stone and a little flour
     const g = ctx.createLinearGradient(0, -s * .05, 0, s * .15); g.addColorStop(0, '#a5a29a'); g.addColorStop(1, '#5d5a54');
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-s * .26, 0); ctx.quadraticCurveTo(0, s * .08, s * .26, 0); ctx.lineTo(s * .24, s * .14); ctx.lineTo(-s * .24, s * .14); ctx.fill();
@@ -2734,7 +2913,7 @@ function levelDone(){
   const stars = 1 + (helped === L.animals.length ? 1 : 0) + (clean ? 1 : 0);
   const titles = {'Forest Trail':'Forest Trail complete!', 'Muddy Hills':'Muddy Hills complete!', 'Mount Evans':'You made it to the top of Mount Evans!',
     'Coral Reef':'You crossed the Coral Reef!', 'Voyage to Hawaii':'Aloha! You made it to Hawaii!',
-    'Ice Age Tundra':'You found the painted cave!', 'Stone Age Farm':'You made it to Stonehenge!'};
+    'Palaeolithic Ice Age':'You found the painted cave!', 'Mesolithic Wildwood':'You reached the lake camp at Star Carr!', 'Neolithic Farm':'You made it to Stonehenge!'};
   $('#dTitle').textContent = titles[L.name] || `${L.name} complete!`;
   $('#dStars').innerHTML = [0, 1, 2].map(i => `<span class="${i < stars ? '' : 'off'}">★</span>`).join('');
   $('#dAni').textContent = helped; $('#dLit').textContent = litter; $('#dHeli').textContent = helpCalls;
@@ -2745,7 +2924,7 @@ function levelDone(){
   $('#dTL').hidden = !L.era;
   if (L.era) {
     document.querySelectorAll('#dTL .tlbar span').forEach(sp => sp.classList.toggle('here', sp.dataset.era === L.era));
-    $('#dTLtxt').textContent = L.outro || 'Next stop: the New Stone Age, when people started to farm.';
+    $('#dTLtxt').textContent = L.outro || '';
   }
   const before = unlocked; unlocked = Math.max(unlocked, levelIdx + 1); persist();
   const next = LEVELS[levelIdx + 1];
@@ -2799,7 +2978,7 @@ function renderWorlds(){
     const Wd = WORLDS[wk], idxs = LEVELS.map((l, i) => l.world === wk ? i : -1).filter(i => i >= 0);
     const open = unlocked >= idxs[0];
     const div = document.createElement('div'); div.className = `world ${wk}${open ? '' : ' locked'}`;
-    const prevWorld = {land:'both Stone Age levels', sea:'all 3 land trails', sky:'both sea levels'}[wk];
+    const prevWorld = {land:'all 3 Stone Age levels', sea:'all 3 land trails', sky:'both sea levels'}[wk];
     div.innerHTML = `<div class="whead"><b>${Wd.icon} ${Wd.title}</b><span>${Wd.subject} questions</span></div>` +
       (open ? '' : `<span class="muted">🔒 Finish ${prevWorld} to unlock</span>`);
     const lv = document.createElement('div'); lv.className = 'lvls';
