@@ -64,6 +64,7 @@ p{margin:0;line-height:1.45;font-size:16px}
 .btn{border:3px solid var(--ink);border-radius:16px 18px 15px 19px;background:var(--sun);font-weight:800;font-size:19px;
   padding:12px 18px;box-shadow:3px 4px 0 var(--ink)}
 .btn:active{transform:translate(3px,4px);box-shadow:none}
+.btn:disabled{opacity:.6;box-shadow:none;transform:none;cursor:wait}
 .btn.alt{background:var(--paper)}
 .btn.go{background:#7fd37a}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -778,16 +779,18 @@ function loadVoices(){
   sel.value = voices.some(v => v.name === voiceName) ? voiceName : '';
 }
 try { speechSynthesis.onvoiceschanged = loadVoices; } catch (e) {}
-function say(text){
-  if (muted) return;
+// onDone runs when the speech finishes, fails or can't start (also when the sound is off).
+function say(text, onDone){
+  if (muted) return onDone && onDone();
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     const v = voices.find(x => x.name === voiceName) || voices[0];
     if (v) { u.voice = v; u.lang = v.lang; }
     u.pitch = 1.05; u.rate = .95;
+    if (onDone) u.onend = u.onerror = () => onDone();
     speechSynthesis.speak(u);
-  } catch (e) {}
+  } catch (e) { onDone && onDone(); }
 }
 
 // ---------------- helpers ----------------
@@ -2854,7 +2857,7 @@ function openRescue(k){
   const rb = $('#rBtn');
   if (meds <= 0) {
     $('#rText').textContent += ' You have no medicine kits left.';
-    rb.hidden = false; rb.textContent = WORLDS[L.world].call;
+    rb.hidden = false; rb.disabled = false; rb.textContent = WORLDS[L.world].call;
     rb.onclick = () => { meds = 1; updateHud(); sfx('ding'); $('#rText').textContent = WORLDS[L.world].friend; rb.hidden = true; ask(); };
   } else { rb.hidden = true; ask(); }
   showOnly('rescueScr');
@@ -2888,9 +2891,15 @@ function ask(){
         $('#rText').textContent = 'All patched up and added to your Rescue Book.';
         $('#rBand').hidden = false; $('#rAniWrap').classList.add('happy');
         $('#rBubble').textContent = a.thanks; $('#rBubble').hidden = false;
-        hearts(); setTimeout(() => say('Did you know? ' + a.fact), 450);
         $('#rFactTxt').textContent = a.fact; $('#rFact').hidden = false;
-        const rb = $('#rBtn'); rb.hidden = false; rb.textContent = isSky() ? 'Keep flying' : L.world === 'sea' ? 'Keep diving' : 'Back to the trail';
+        // The way back stays locked until the "Did you know?" fact has been read out in full.
+        const rb = $('#rBtn'), goLabel = isSky() ? 'Keep flying' : L.world === 'sea' ? 'Keep diving' : 'Back to the trail', fact = 'Did you know? ' + a.fact;
+        rb.hidden = false; rb.disabled = true; rb.textContent = muted ? '📖 Read the fact…' : '🔊 Listening…';
+        let unlockedBtn = false; const me = resc;   // ignore timers left over from an earlier rescue
+        const unlock = () => { if (unlockedBtn || resc !== me) return; unlockedBtn = true; rb.disabled = false; rb.textContent = goLabel; };
+        const est = 1200 + fact.length * 70;   // rough speaking (or reading) time at this voice rate
+        hearts(); setTimeout(() => muted ? setTimeout(unlock, est) : say(fact, unlock), 450);
+        setTimeout(unlock, 450 + est * 1.6 + 2000);   // safety net in case the speech never reports that it finished
         const k = resc.k;
         rb.onclick = () => {
           showOnly(null); phase = 'run'; inv = 1.2;
