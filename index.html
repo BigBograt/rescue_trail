@@ -454,6 +454,12 @@ const ANIMALS = {
   sparrow: {w:'sky', e:'🐦', f:BROWN_BIRD, n:'Sparrow', hurt:'has a balloon string tangled round its foot.', thanks:'Cheep cheep! Thank you for untangling me!', fact:'Sparrows love taking dust baths to keep their feathers clean.'},
   magpie:  {w:'sky', e:'🐦‍⬛', n:'Magpie', hurt:'has a bent tail feather.', thanks:'Chak chak! Thank you so much!', fact:'Magpies are super clever. They can recognise themselves in a mirror!'},
   eagle:   {w:'sky', e:'🦅', n:'Eagle', hurt:'has a sore talon.', thanks:'Thank you, Doctor! I can hold my branch again!', fact:'Eagles have super eyesight. They can spot a rabbit from very, very far away.'},
+  swan:    {w:'sky', e:'🦢', n:'Mute swan', hurt:'has fishing line caught round its wing.', thanks:'Thank you! I can stretch my wings again!', fact:'A swan\'s wings stretch wider than a tall grown-up is high, and swans can fly at over 50 miles an hour!'},
+  mallard: {w:'sky', e:'🦆', n:'Mallard duck', hurt:'bumped into a power line.', thanks:'Quack quack! Thank you so much!', fact:'Ducks spread oil from a special gland over their feathers to make them waterproof.'},
+  dove:    {w:'sky', e:'🕊️', n:'Dove', hurt:'got lost in a storm.', thanks:'Coo coo! Thank you for helping me find my way!', fact:'Pigeons and doves can find their way home from hundreds of miles away, using the Sun and Earth\'s magnetism.'},
+  pipbat:  {w:'sky', e:'🦇', n:'Pipistrelle bat', hurt:'got stuck in a chimney.', thanks:'Squeak! Thank you! Back to catching moths!', fact:'Bats are the only mammals that can really fly. They find insects in the dark by listening for echoes.'},
+  butterfly:{w:'sky', e:'🦋', n:'Butterfly', hurt:'has a torn wing.', thanks:'Thank you! I can flutter again!', fact:'Butterflies taste with their feet! They land on leaves to check they are the right plant for their eggs.'},
+  bumblebee:{w:'sky', e:'🐝', n:'Bumblebee', hurt:'is too cold to fly.', thanks:'Bzzz! Thank you for warming me up!', fact:'Bumblebees shiver their flight muscles to warm up before they can take off on a cold morning.'},
   owl:     {w:'sky', e:'🦉', n:'Owl', boss:true, hurt:'is really poorly on the mountain top. This owl is hurt the most!', thanks:'Hoo hoo! Thank you! You flew all the way up here to save me!', fact:'Owls cannot move their eyes, so they turn their heads instead, almost all the way round!'},
 };
 
@@ -509,7 +515,7 @@ const LEVELS = [
   {world:'sea', name:'Voyage to Hawaii', len:8500, speed:1.1, mix:{barrel:3,jelly:4,net:3,litter:5,med:2,air:2},
    water:['#2a93c4','#06304f'], sand:'#cdb27c', animals:['seal','dolphin','turtle'], end:'Hawaii'},
   {world:'sky', name:'Sky Rescue', endless:true, speed:.95, mix:{litter:5,med:2,sun:2,blimp:1},
-   sky:['#4fa3e0','#dceffc'], far:'#9fb9d3', animals:['bluetit','sparrow','magpie','eagle']},
+   sky:['#4fa3e0','#dceffc'], far:'#9fb9d3', animals:['bluetit','sparrow','magpie','eagle','swan','mallard','dove','pipbat','butterfly','bumblebee']},
 ];
 const AT = [0.28, 0.58, 0.86];
 
@@ -709,6 +715,37 @@ const SCI_EASY = [
   ['What keeps a polar bear warm?', 'Thick fur and fat', ['A woolly hat','Hot chocolate']],
   ['Which of these melts in the sun?', 'An ice lolly', ['A stone','A spoon']],
   ['What do tadpoles grow into?', 'Frogs', ['Fish','Ducks']],
+  // flight, weather and the sky
+  ['What do birds use to fly?', 'Wings', ['Fins','Wheels']],
+  ['Which of these animals can fly?', 'A bat', ['A cat','A dog']],
+  ['What is wind?', 'Moving air', ['Falling water','Hot sand']],
+  ['What are clouds made of?', 'Tiny drops of water', ['Cotton wool','Smoke from chimneys']],
+  ['In a storm, which do we notice first?', 'The lightning flash', ['The thunder','The rainbow']],
+  ['What do we call white flakes of frozen water falling from the sky?', 'Snow', ['Fog','Mud']],
+  ['What does a kite need to fly?', 'Wind', ['Water','Sand']],
+  ['Which of these is an insect that can fly?', 'A bee', ['A spider','A worm']],
+  ['What helps an aeroplane stay up in the sky?', 'Its wings', ['Its windows','Its seats']],
+  ['What is a baby bird called?', 'A chick', ['A cub','A kitten']],
+  ['Which bird hoots at night?', 'An owl', ['A duck','A robin']],
+  ['What do bees collect from flowers?', 'Nectar and pollen', ['Leaves','Stones']],
+  ['Which of these is not a bird?', 'A bat', ['An eagle','A sparrow']],
+  ['What can we see in the sky when the Sun shines during rain?', 'A rainbow', ['A snowman','A star']],
+  ['How many colours are in a rainbow?', '7', ['3','20']],
+  ['Why do some birds fly to warmer places in winter?', 'To find warmth and food', ['To go to school','To see the sea']],
+  ['What shines in the night sky and seems to change shape?', 'The Moon', ['The Sun','A cloud']],
+  ['What helps protect your skin from the strong Sun?', 'Sun cream and a hat', ['A raincoat','An ice cream']],
+  ['Which of these floats up into the sky?', 'A helium balloon', ['A rock','A brick']],
+  ['Which animal spins a web to catch flying insects?', 'A spider', ['A fish','A cow']],
+  ['What do feathers help birds do?', 'Fly and keep warm', ['Hear','Smell']],
+  ['Which bird can fly backwards?', 'A hummingbird', ['A penguin','An ostrich']],
+  ['Which is the biggest bird in the world?', 'An ostrich', ['A robin','A sparrow']],
+  ['Where do bats sleep in the daytime?', 'Hanging upside down somewhere dark', ['In a mud nest','Under water']],
+  ['What do we call the line where the sky seems to meet the land?', 'The horizon', ['The rainbow','The equator']],
+  ['What makes puddles dry up on a sunny day?', 'The heat of the Sun', ['Ducks drinking them','The Moon']],
+  ['What is a group of birds flying together called?', 'A flock', ['A herd','A school']],
+  ['What do we use to look at stars far away?', 'A telescope', ['A microscope','A spoon']],
+  ['Which way does smoke from a fire usually go?', 'Up', ['Down','Into the ground']],
+  ['What do we call water falling from clouds?', 'Rain', ['Sand','Leaves']],
 ];
 
 // Science (sky) — ages 8–10
@@ -772,6 +809,37 @@ const SCI_HARD = [
   ['How many planets are in our solar system?', '8', ['5','12']],
   ['What protects Earth from the Sun\'s harmful rays?', 'The atmosphere', ['The Moon','The oceans']],
   ['Why do owls hunt well in the dark?', 'Super hearing and big eyes', ['They glow in the dark','They use torches']],
+  // flight, weather and the sky
+  ['Which force pushes a bird or a plane upwards as it flies?', 'Lift', ['Gravity','Friction']],
+  ['Which force slows down a falling parachute?', 'Air resistance', ['Magnetism','Gravity']],
+  ['Why does a parachute fall slowly?', 'Its big canopy pushes against lots of air', ['It is made of feathers','It has no weight']],
+  ['What are clouds made from?', 'Tiny water droplets or ice crystals', ['Smoke','Steam from kettles']],
+  ['What is the layer of air around Earth called?', 'The atmosphere', ['The crust','The core']],
+  ['What causes thunder?', 'Lightning heating the air very quickly', ['Clouds bumping together','Rain hitting the ground']],
+  ['Why do we see lightning before we hear thunder?', 'Light travels faster than sound', ['Sound travels faster than light','Our eyes are bigger than our ears']],
+  ['What is a meteorologist?', 'A scientist who studies the weather', ['A scientist who studies rocks','Someone who makes maps']],
+  ['What does an anemometer measure?', 'Wind speed', ['Temperature','Rainfall']],
+  ['What does a barometer measure?', 'Air pressure', ['Temperature','Height']],
+  ['Why does a helium balloon float?', 'Helium is lighter than air', ['The string pulls it up','It is full of water']],
+  ['Which planet has the biggest, brightest rings?', 'Saturn', ['Mars','Mercury']],
+  ['Roughly how long does sunlight take to reach Earth?', 'About 8 minutes', ['About 8 seconds','About 8 days']],
+  ['Who was the first person to walk on the Moon?', 'Neil Armstrong', ['Isaac Newton','Charles Darwin']],
+  ['What are the Wright brothers famous for?', 'The first powered aeroplane flight', ['Inventing the hot air balloon','Building the first rocket']],
+  ['Which bird has the widest wings of all?', 'The wandering albatross', ['The robin','The pigeon']],
+  ['Which is the fastest animal on Earth when diving?', 'The peregrine falcon', ['The cheetah','The eagle owl']],
+  ['How do bats find insects in the dark?', 'By listening to echoes of their calls', ['By using their sense of taste','By glowing in the dark']],
+  ['Why do birds have hollow bones?', 'To keep them light for flying', ['To store water','To make sounds']],
+  ['What is migration?', 'Animals travelling long distances at the same time each year', ['Animals sleeping all winter','Animals changing colour']],
+  ['What gives the water cycle its energy?', 'The Sun', ['The Moon','Volcanoes']],
+  ['Which type of cloud is tall, dark and brings thunderstorms?', 'Cumulonimbus', ['Cirrus','Fog']],
+  ['Which layer high in the atmosphere protects us from harmful ultraviolet rays?', 'The ozone layer', ['The crust','The clouds']],
+  ['A rainbow appears when sunlight is…', 'split into colours by raindrops', ['reflected off the Moon','coloured by clouds']],
+  ['What do pilots call wind blowing straight towards the front of the plane?', 'A headwind', ['A tailwind','A crosswind']],
+  ['Why is it colder at the top of a high mountain?', 'The air is thinner and holds less heat', ['It is nearer the Moon','Snow makes the air cold']],
+  ['What do bees make honey from?', 'Nectar from flowers', ['Tree sap','Rainwater']],
+  ['Which feathers keep a bird warm?', 'Soft, fluffy down feathers', ['The long tail feathers','The beak']],
+  ['What is gravity?', 'A force that pulls objects towards each other', ['A type of wind','A kind of cloud']],
+  ['What do we call a scientist who studies stars and planets?', 'An astronomer', ['An astronaut','An archaeologist']],
 ];
 
 // ---------------- storage (per-viewer convenience) ----------------
@@ -797,6 +865,18 @@ if (!nick) try {
   if (m) nick = JSON.parse(decodeURIComponent(m[1]));
 } catch (e) {}
 if (nick) saveNickCookie();
+// A hidden, random player ID for this device, so the leaderboard shows each player once under their latest
+// name, even after they change it. Kept in localStorage and a cookie like the nickname, and never shown.
+let playerId = null;
+try { playerId = localStorage.getItem('vrt-pid'); } catch (e) {}
+if (!playerId) try { const m = document.cookie.match(/(?:^|; )vrt-pid=([^;]*)/); if (m) playerId = decodeURIComponent(m[1]); } catch (e) {}
+if (!/^[0-9a-f-]{36}$/.test(playerId || '')) {
+  playerId = (crypto.randomUUID && crypto.randomUUID()) ||
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+  sent = {flight: 0, animals: 0};   // send this device's best scores again, now tagged with its ID
+}
+try { localStorage.setItem('vrt-pid', playerId); localStorage.setItem('vrt-sent', JSON.stringify(sent)); } catch (e) {}
+try { document.cookie = `vrt-pid=${playerId}; max-age=${400 * 86400}; path=/; SameSite=Lax`; } catch (e) {}
 // The level list has changed a few times, and `unlocked` is the highest level index a player can open.
 // Older saves are carried over by level name, so nobody loses a level they had already reached.
 try {
@@ -1415,7 +1495,7 @@ function spawnColumn(){
 }
 function spawnAnimalColumn(){
   const s = skyS(), boss = skyCount % 5 === 4;
-  const k = boss ? 'owl' : pick(L.animals);
+  const k = boss ? 'owl' : deal('sky-birds', L.animals);
   const top = clamp(GROUND() - (boss ? H * .44 : rand(H * .18, H * .3)), TOPY() + s * 2.4, GROUND() - s);
   const w = s * (boss ? 4.4 : 3), x = W + w;
   objs.push({t: 'peak', x, w, top, seed: Math.random() * 99, snow: boss});
@@ -3179,7 +3259,7 @@ async function syncScores(){
     for (const [b, v] of [['flight', best], ['animals', totalHelped]]) {
       const score = Math.min(v, BOARD_MAX[b]);
       if (score <= (sent[b] || 0)) continue;
-      await sb('scores', {method: 'POST', headers: {Prefer: 'return=minimal'}, body: JSON.stringify({board: b, ...nick, score})});
+      await sb('scores', {method: 'POST', headers: {Prefer: 'return=minimal'}, body: JSON.stringify({board: b, ...nick, score, player_id: playerId})});
       sent[b] = score; persist();
     }
   } catch (e) {} finally { syncing = false; }
